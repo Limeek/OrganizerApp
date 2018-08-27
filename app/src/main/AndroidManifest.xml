@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.limeek.organizer">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:name=".app.App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/GoogleApiKey"/>
+        <activity
+            android:name=".calendar.view.CalendarActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="ru.limeek.organizer.event.eventdetails.view.EventDetailsActivity"
+                  android:label="@string/event_details"/>
+        <activity android:name=".locations.view.LocationActivity"
+                  android:label="@string/title_locations"/>
+        <activity android:name=".locations.locationdetails.view.LocationDetailsActivity"
+                  android:label="@string/title_locations"/>
+        <activity android:name=".digest.DigestActivity"
+                  android:label="@string/digest"/>
+        <activity android:name=".digest.news.view.NewsWebActivity"/>
+        <receiver android:name=".receiver.BroadcastReceiverNotification"
+                  android:enabled="true"
+            />
+    </application>
+</manifest>
