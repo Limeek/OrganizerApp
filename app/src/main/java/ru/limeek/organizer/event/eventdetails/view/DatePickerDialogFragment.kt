@@ -20,18 +20,16 @@ class DatePickerDialogFragment() : DialogFragment() {
     var dateSetListener = DatePickerDialog.OnDateSetListener() {
         _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
             val parentActivity = activity as EventDetailsActivity
-            if (month / 10 == 0) {
-                parentActivity.date.setText("$dayOfMonth.0${month + 1}.$year")
-                if(parentActivity.time.text.toString() != "")
-                    parentActivity.presenter.updateSpinnerItems()
+            val dateText = when{
+                month / 10 == 0 && dayOfMonth / 10 == 0 -> "0$dayOfMonth.0${month + 1}.$year"
+                month / 10 == 0 -> "$dayOfMonth.0${month + 1}.$year"
+                dayOfMonth / 10 == 0 -> "0$dayOfMonth.${month + 1}.$year"
+                else -> "$dayOfMonth.${month + 1}.$year"
             }
-            else {
-                parentActivity.date.setText("$dayOfMonth.${month + 1}.$year")
-                if(parentActivity.time.text.toString() != "")
-                    parentActivity.presenter.updateSpinnerItems()
-            }
-        Log.wtf(logTag,"$dayOfMonth.0${month + 1}.$year")
-
+            parentActivity.date.setText(dateText)
+            if(parentActivity.time.text.toString() != "")
+                parentActivity.presenter.updateSpinnerItems()
+            Log.wtf(logTag,"$dayOfMonth.0${month + 1}.$year")
     }
 
     override fun setArguments(args: Bundle?) {

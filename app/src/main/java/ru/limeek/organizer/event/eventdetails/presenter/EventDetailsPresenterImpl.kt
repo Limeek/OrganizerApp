@@ -48,28 +48,32 @@ class EventDetailsPresenterImpl (var eventDetailsView: EventDetailsView) : Event
     }
 
     override fun submit() {
+        if(eventDetailsView.time.text.toString() != "") {
+            repository.sharedPreferences.putDateTime("cachedDate", DateTime.parse(eventDetailsView.date.text.toString(), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY)))
+            eventDetailsView.startCalendarActivity()
             compositeDisposable!!.add(
                     Observable.fromCallable {
-                    if (event != null) {
-                        if (!eventDetailsView.notification.isChecked)
-                            remindTime = RemindTime.NOREMIND
-                        if (eventDetailsView.locationSwitch != null && !eventDetailsView.locationSwitch!!.isChecked) {
-                            chosenLocationId = null
-                            createdCustomLocation = null
+                        if (event != null) {
+                            if (!eventDetailsView.notification.isChecked)
+                                remindTime = RemindTime.NOREMIND
+                            if (eventDetailsView.locationSwitch != null && !eventDetailsView.locationSwitch!!.isChecked) {
+                                chosenLocationId = null
+                                createdCustomLocation = null
+                            }
+                            updateEvent()
+                        } else {
+                            if (!eventDetailsView.notification.isChecked) remindTime = RemindTime.NOREMIND
+                            insertEvent()
+                            event!!.id = eventId!!
                         }
-                        updateEvent()
                     }
-                    else {
-                        if (!eventDetailsView.notification.isChecked) remindTime = RemindTime.NOREMIND
-                        insertEvent()
-                        event!!.id = eventId!!
-                    }
-                }
-                        .concatWith(sendToAlarmManager())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe()
+                            .concatWith(sendToAlarmManager())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe()
             )
+        }
+        else eventDetailsView.showErrorNotificationAndHideLayout()
     }
 
     override fun delete() {
@@ -304,6 +308,11 @@ class EventDetailsPresenterImpl (var eventDetailsView: EventDetailsView) : Event
         //NoLocInteraction
             event!!.location == null && createdCustomLocation == null && chosenLocationId == null -> {
                 updatedEvent = Event(event!!.id, getDateTimeFromEditTexts(), eventDetailsView.summary.text.toString(), remindTime!!)
+                repository.database.eventDao().update(updatedEvent)
+            }
+        //UpdatingInUneditableWithLoc
+            event!!.location != null && eventDetailsView.getUneditable() != null -> {
+                updatedEvent = Event(event!!.id, getDateTimeFromEditTexts(), eventDetailsView.summary.text.toString(), remindTime!!, event!!.locationId!!)
                 repository.database.eventDao().update(updatedEvent)
             }
         //AddCustLoc

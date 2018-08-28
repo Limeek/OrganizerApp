@@ -153,7 +153,6 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
             android.R.id.home -> finish()
             R.id.action_submit -> {
                 presenter.submit()
-                startCalendarActivity()
                 return true
             }
             R.id.action_delete ->{
@@ -249,7 +248,7 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
         startActivity(mapIntent)
     }
 
-    private fun startCalendarActivity(){
+    override fun startCalendarActivity(){
         val intentMainActivity = Intent(this, CalendarActivity::class.java)
         startActivity(intentMainActivity)
         finish()
@@ -277,7 +276,8 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onDestroy()
         component = null
     }
+
+
 }

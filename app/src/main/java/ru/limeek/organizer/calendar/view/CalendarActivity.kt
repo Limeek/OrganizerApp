@@ -81,11 +81,11 @@ class CalendarActivity : AppCalendarView, AppCompatActivity()  {
             setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
 
+        presenter.onCreate()
         calendar.setOnDateChangeListener(presenter.onDateChange())
         navigation.setNavigationItemSelectedListener(navigationItemClick)
 
         checkAndRequestPermissions()
-        presenter.onCreate()
     }
 
    override fun refreshEventsFragment(){
@@ -127,5 +127,9 @@ class CalendarActivity : AppCalendarView, AppCompatActivity()  {
     override fun onDestroy() {
         super.onDestroy()
         component = null
+    }
+
+    override fun setDate(millis: Long) {
+        calendar.setDate(millis,false,true)
     }
 }

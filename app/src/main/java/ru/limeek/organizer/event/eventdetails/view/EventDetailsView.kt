@@ -37,4 +37,5 @@ interface EventDetailsView : View {
     fun setupPlaceSpinnerAdapter(items: List<LocationSpinnerItem>)
     fun startLocationDetailsActivity()
     fun startPlacePicker()
+    fun startCalendarActivity()
 }

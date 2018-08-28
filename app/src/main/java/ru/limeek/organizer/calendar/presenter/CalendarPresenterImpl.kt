@@ -31,7 +31,7 @@ class CalendarPresenterImpl (var calView : AppCalendarView?) : CalendarPresenter
     }
 
     override fun onCreate() {
-        repository.sharedPreferences.putDateTime("cachedDate",DateTime.now())
+        calView!!.setDate(repository.sharedPreferences.getDateTime("cachedDate").millis)
         calView!!.currentDate.text = repository.sharedPreferences.getDateString("cachedDate")
     }
 }

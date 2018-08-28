@@ -7,4 +7,5 @@ interface AppCalendarView : View {
     var currentDate : TextView
 
     fun refreshEventsFragment()
+    fun setDate(millis : Long)
 }
