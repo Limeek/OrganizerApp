@@ -6,6 +6,6 @@ import retrofit2.http.Path
 import ru.limeek.organizer.model.weather.WeatherInfo
 
 interface DarkSkyApi {
-    @GET("{createdCustomLocation}?units=si")
-    fun getWeatherForLocation(@Path("createdCustomLocation") location: String?) : Flowable<WeatherInfo>
+    @GET("{location}?units=si")
+    fun getWeatherForLocation(@Path("location") location: String?) : Flowable<WeatherInfo>
 }
