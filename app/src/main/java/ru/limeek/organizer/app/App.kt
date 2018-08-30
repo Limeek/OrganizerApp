@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import com.squareup.leakcanary.LeakCanary
+import org.joda.time.DateTime
 import ru.limeek.organizer.R
 import ru.limeek.organizer.database.AppDatabase
 import ru.limeek.organizer.di.components.AppComponent
@@ -18,6 +19,7 @@ import ru.limeek.organizer.di.components.DaggerAppComponent
 import ru.limeek.organizer.di.modules.RetrofitModule
 import ru.limeek.organizer.di.modules.RoomModule
 import ru.limeek.organizer.di.modules.SharedPreferencesModule
+import ru.limeek.organizer.model.OrganizerSharedPreferences
 import ru.limeek.organizer.util.Constants
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,6 +32,8 @@ class App : Application() {
 
     @Inject
     lateinit var database: AppDatabase
+    @Inject
+    lateinit var sharedPreferences: OrganizerSharedPreferences
 
     lateinit var component: AppComponent
 
@@ -52,6 +56,7 @@ class App : Application() {
         component.inject(this)
 
         instance = this
+        sharedPreferences.putDateTime("cachedDate", DateTime.now())
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
