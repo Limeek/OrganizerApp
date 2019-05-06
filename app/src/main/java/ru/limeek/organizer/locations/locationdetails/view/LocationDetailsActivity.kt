@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.widget.EditText
 import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_location_details.*
+import kotlinx.android.synthetic.main.location_item.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.di.components.ViewComponent
@@ -19,7 +20,7 @@ import ru.limeek.organizer.di.modules.PresenterModule
 import ru.limeek.organizer.event.eventdetails.view.EventDetailsActivity
 import ru.limeek.organizer.locations.locationdetails.presenter.LocationDetailsPresenter
 import ru.limeek.organizer.locations.view.LocationActivity
-import ru.limeek.organizer.model.Location.Location
+import ru.limeek.organizer.model.location.Location
 import javax.inject.Inject
 
 class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
@@ -31,9 +32,6 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
     @Inject
     lateinit var presenter : LocationDetailsPresenter
 
-    override lateinit var name: EditText
-    override lateinit var address: EditText
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +42,7 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        name = etName
-        address = etAddress
-        address.setOnClickListener{startPlacePicker()}
+        etAddress.setOnClickListener{startPlacePicker()}
 
         presenter.onCreate()
     }
@@ -116,7 +112,7 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
                 PLACE_PICKER_REQUEST -> {
                     val place = PlacePicker.getPlace(this,data)
                     presenter.createLocation(place)
-                    address.setText(place.address)
+                    etAddress.setText(place.address)
                 }
             }
         super.onActivityResult(requestCode, resultCode, data)
@@ -142,4 +138,21 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
         setResult(Activity.RESULT_OK,intent)
         finish()
     }
+
+    override fun updateAddress(address: String) {
+        etAddress.setText(address)
+    }
+
+    override fun updateName(name: String) {
+        etName.setText(name)
+    }
+
+    override fun getName(): String {
+        return etName.text.toString()
+    }
+
+    override fun getAddress(): String {
+        return etAddress.text.toString()
+    }
+
 }

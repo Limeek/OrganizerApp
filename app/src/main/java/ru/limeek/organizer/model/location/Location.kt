@@ -1,4 +1,4 @@
-package ru.limeek.organizer.model.Location
+package ru.limeek.organizer.model.location
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity

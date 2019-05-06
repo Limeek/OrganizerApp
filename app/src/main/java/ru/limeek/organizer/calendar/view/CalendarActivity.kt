@@ -26,8 +26,6 @@ import ru.limeek.organizer.locations.view.LocationActivity
 import javax.inject.Inject
 
 class CalendarActivity : AppCalendarView, AppCompatActivity()  {
-    override lateinit var currentDate: TextView
-
     @Inject
     lateinit var presenter : CalendarPresenter
 
@@ -70,7 +68,6 @@ class CalendarActivity : AppCalendarView, AppCompatActivity()  {
 
         getViewComponent().inject(this)
 
-        currentDate = tvCurrentDate
         calendar = calendarView
         eventFragment = fragContainer
         drawer = drawerLayout
@@ -127,6 +124,10 @@ class CalendarActivity : AppCalendarView, AppCompatActivity()  {
     override fun onDestroy() {
         super.onDestroy()
         component = null
+    }
+
+    override fun updateCurrentDate(dateString: String) {
+        tvCurrentDate.text = dateString
     }
 
     override fun setDate(millis: Long) {

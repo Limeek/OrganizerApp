@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import org.joda.time.DateTime
 import ru.limeek.organizer.event.eventdetails.view.DatePickerDialogFragment
 import ru.limeek.organizer.event.eventdetails.view.TimePickerDialogFragment
-import ru.limeek.organizer.model.Event.Event
-import ru.limeek.organizer.model.Event.RemindTime
+import ru.limeek.organizer.model.event.Event
+import ru.limeek.organizer.model.event.RemindTime
 
 interface EventDetailsPresenter {
     var remindTimeList : MutableList<RemindTime>?
@@ -17,8 +17,6 @@ interface EventDetailsPresenter {
     fun submit()
     fun delete()
     fun onCreate()
-    fun createDateDialog() : DatePickerDialogFragment
-    fun createTimeDialog() : TimePickerDialogFragment
     fun sendToAlarmManager() : Observable<Unit>
     fun notificationSpinnerOnItemSelected() : AdapterView.OnItemSelectedListener
     fun locationSpinnerOnItemsSelected() : AdapterView.OnItemSelectedListener

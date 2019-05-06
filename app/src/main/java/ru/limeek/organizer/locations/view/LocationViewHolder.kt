@@ -6,7 +6,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.location_item.view.*
 import ru.limeek.organizer.locations.locationdetails.view.LocationDetailsActivity
 import ru.limeek.organizer.locations.presenter.LocationViewHolderPresenter
-import ru.limeek.organizer.model.Location.Location
+import ru.limeek.organizer.model.location.Location
 
 class LocationViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
     var presenter = LocationViewHolderPresenter(this)

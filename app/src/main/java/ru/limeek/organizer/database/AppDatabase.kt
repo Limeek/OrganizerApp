@@ -5,10 +5,10 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
-import ru.limeek.organizer.model.Event.Event
-import ru.limeek.organizer.model.Event.EventDao
-import ru.limeek.organizer.model.Location.Location
-import ru.limeek.organizer.model.Location.LocationDao
+import ru.limeek.organizer.model.event.Event
+import ru.limeek.organizer.model.event.EventDao
+import ru.limeek.organizer.model.location.Location
+import ru.limeek.organizer.model.location.LocationDao
 
 @Database(entities = arrayOf(Event::class, Location::class),version = 6,exportSchema = false)
 @TypeConverters(DateTimeConverter::class)

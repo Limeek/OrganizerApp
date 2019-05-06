@@ -9,28 +9,28 @@ import io.reactivex.schedulers.Schedulers
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.digest.weather.view.WeatherFragmentView
-import ru.limeek.organizer.model.repository.Repository
 import ru.limeek.organizer.model.weather.WeatherInfo
+import ru.limeek.organizer.repository.WeatherRepository
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class WeatherPresenterImpl (private val weatherFragmentView: WeatherFragmentView) : WeatherPresenter {
-    lateinit var weatherInfo : WeatherInfo
-    lateinit var city : String
-    lateinit var location : Location
-    var disposable : Disposable? = null
+class WeatherPresenterImpl(private val weatherFragmentView: WeatherFragmentView) : WeatherPresenter {
+    lateinit var weatherInfo: WeatherInfo
+    lateinit var city: String
+    lateinit var location: Location
+    var disposable: Disposable? = null
 
     @Inject
-    lateinit var repository: Repository
+    lateinit var repository: WeatherRepository
 
     init {
         App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
     }
 
     override fun onCreate() {
-        if(App.instance.checkLocationPermission()){
+        if (App.instance.checkLocationPermission()) {
             val locationManager = App.instance.locationManager
-            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(Criteria(),true))
+            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(Criteria(), true))
             getWeather()
         }
     }
@@ -42,25 +42,24 @@ class WeatherPresenterImpl (private val weatherFragmentView: WeatherFragmentView
         weatherFragmentView.setWeatherIcon(weatherInfo.currently!!.icon!!)
     }
 
-    private fun getWeather(){
+    private fun getWeather() {
         disposable =
-                repository.darkSkyApi
-                .getWeatherForLocation(getLocationString())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe{
-                    weatherInfo ->
-                    this.weatherInfo = weatherInfo
-                    setupCityName()
-                    updateUI()
-                }
+                repository
+                        .getWeatherForLocation(getLocationString())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe { weatherInfo ->
+                            this.weatherInfo = weatherInfo
+                            setupCityName()
+                            updateUI()
+                        }
     }
 
-    private fun getLocationString() : String{
+    private fun getLocationString(): String {
         return "${location.latitude},${location.longitude}"
     }
 
-    private fun setupCityName(){
+    private fun setupCityName() {
         val geoCoder = Geocoder(App.instance.applicationContext)
         val address = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
         city = address[0].locality.toString()

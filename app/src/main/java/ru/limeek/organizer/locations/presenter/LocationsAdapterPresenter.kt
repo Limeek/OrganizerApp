@@ -6,8 +6,8 @@ import io.reactivex.schedulers.Schedulers
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.locations.view.LocationsAdapter
-import ru.limeek.organizer.model.Location.Location
-import ru.limeek.organizer.model.repository.Repository
+import ru.limeek.organizer.model.location.Location
+import ru.limeek.organizer.repository.LocationRepository
 import javax.inject.Inject
 
 class LocationsAdapterPresenter(var locationsAdapter: LocationsAdapter) {
@@ -15,33 +15,33 @@ class LocationsAdapterPresenter(var locationsAdapter: LocationsAdapter) {
     var disposable: Disposable? = null
 
     @Inject
-    lateinit var repository: Repository
+    lateinit var repository: LocationRepository
 
-    init{
+    init {
         App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
         updateLocations()
     }
 
-    fun updateLocations(){
+    fun updateLocations() {
         disposable =
-                repository.database.locationDao().getUserCreatedLocations()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe { locations ->
-                    this.locations = locations
-                    locationsAdapter.notifyDataSetChanged()
-                }
+                repository.getUserCreatedLocations()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe { locations ->
+                            this.locations = locations
+                            locationsAdapter.notifyDataSetChanged()
+                        }
     }
 
-    fun getCount() : Int{
+    fun getCount(): Int {
         return locations.size
     }
 
-    fun getItemAt(position: Int) : Location{
+    fun getItemAt(position: Int): Location {
         return locations[position]
     }
 
-    fun onDestroy(){
+    fun onDestroy() {
         disposable!!.dispose()
         disposable = null
     }

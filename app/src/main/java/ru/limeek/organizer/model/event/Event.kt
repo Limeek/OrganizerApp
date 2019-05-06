@@ -1,4 +1,4 @@
-package ru.limeek.organizer.model.Event
+package ru.limeek.organizer.model.event
 
 import android.arch.persistence.room.*
 import android.os.Parcel
@@ -6,7 +6,7 @@ import android.os.Parcelable
 import org.joda.time.DateTime
 import ru.limeek.organizer.database.DateTimeConverter
 import ru.limeek.organizer.database.RemindTimeConverter
-import ru.limeek.organizer.model.Location.Location
+import ru.limeek.organizer.model.location.Location
 import ru.limeek.organizer.util.Constants
 
 @Entity(tableName = "events",

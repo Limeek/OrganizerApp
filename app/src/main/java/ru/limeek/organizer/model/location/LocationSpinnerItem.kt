@@ -1,4 +1,4 @@
-package ru.limeek.organizer.model.Location
+package ru.limeek.organizer.model.location
 
 data class LocationSpinnerItem(val name: String,
                                val locationId : Long?){

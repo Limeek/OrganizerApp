@@ -9,14 +9,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SwitchCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.google.android.gms.location.places.ui.PlacePicker
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_event_details.*
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.calendar.view.CalendarActivity
@@ -24,9 +26,10 @@ import ru.limeek.organizer.di.components.ViewComponent
 import ru.limeek.organizer.di.modules.PresenterModule
 import ru.limeek.organizer.event.eventdetails.presenter.EventDetailsPresenter
 import ru.limeek.organizer.locations.locationdetails.view.LocationDetailsActivity
-import ru.limeek.organizer.model.Event.Event
-import ru.limeek.organizer.model.Event.RemindTime
-import ru.limeek.organizer.model.Location.LocationSpinnerItem
+import ru.limeek.organizer.model.event.Event
+import ru.limeek.organizer.model.event.RemindTime
+import ru.limeek.organizer.model.location.LocationSpinnerItem
+import ru.limeek.organizer.util.Constants
 import javax.inject.Inject
 
 class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickListener {
@@ -39,24 +42,13 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
     private val LOCATION_DETAILS_REQUEST = 2
 
-    override lateinit var date: EditText
-    override lateinit var summary: EditText
-    override lateinit var time: EditText
-    override lateinit var remind: Spinner
-    override lateinit var notificationAdapter: ArrayAdapter<RemindTime>
-    override lateinit var notification: SwitchCompat
-    override lateinit var notificationLayout: LinearLayout
-    override lateinit var locationAddress: EditText
-    override lateinit var locationAdapter: ArrayAdapter<LocationSpinnerItem>
-    override lateinit var locationChooseLayout: LinearLayout
-
-    override var locationSwitch: SwitchCompat? = null
-    override var locationSpinner: Spinner? = null
-    override lateinit var locationCreationLayout: LinearLayout
-
+    private lateinit var notificationAdapter: ArrayAdapter<RemindTime>
+    private lateinit var locationAdapter: ArrayAdapter<LocationSpinnerItem>
 
     @Inject
     lateinit var presenter : EventDetailsPresenter
+
+    private var compositeDisposable = CompositeDisposable()
 
     @Override
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -77,31 +69,18 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
 
         if (!intent.hasExtra("uneditable")){
             setContentView(R.layout.activity_event_details)
-            locationSwitch = switchLocation
-            locationSwitch!!.setOnClickListener(this)
-            locationSpinner = spinnerLocation
-            locationChooseLayout = linearLayoutLocationChoose
+            switchLocation.setOnClickListener(this)
             presenter.setupLocationSpinner()
-            locationAddress = etLocation
-            locationAddress.setOnClickListener(this)
+            etLocation.setOnClickListener(this)
+            etDate.setOnClickListener(this)
+            etTime.setOnClickListener(this)
         }
         else {
             setContentView(R.layout.activity_event_details_uneditable)
-            locationAddress = etLocation
-            locationAddress.setOnClickListener(this)
+            etLocation.setOnClickListener(this)
         }
 
-        date = etDate
-        time = etTime
-        summary = etSummary
-        remind = spinnerRemind
-        date.setOnClickListener(this)
-        time.setOnClickListener(this)
-        notification = switchNotification
-        notificationLayout = linearLayoutNotification
-        notification.setOnClickListener(this)
-        locationCreationLayout = linearLayoutLocationCreation
-
+        switchNotification.setOnClickListener(this)
         setupNotificationSpinnerAdapter()
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -134,17 +113,17 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
     }
 
     override fun setupNotificationSpinnerAdapter() {
-        notificationAdapter = ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,presenter.remindTimeList)
+        notificationAdapter = ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item, presenter.remindTimeList)
         notificationAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-        remind.adapter = notificationAdapter
-        remind.onItemSelectedListener = presenter.notificationSpinnerOnItemSelected()
+        spinnerRemind.adapter = notificationAdapter
+        spinnerRemind.onItemSelectedListener = presenter.notificationSpinnerOnItemSelected()
     }
 
     override fun setupPlaceSpinnerAdapter(items: List<LocationSpinnerItem>) {
-        locationAdapter = ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,items)
+        locationAdapter = ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item, items)
         locationAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-        locationSpinner!!.adapter = locationAdapter
-        locationSpinner!!.onItemSelectedListener = presenter.locationSpinnerOnItemsSelected()
+        spinnerLocation!!.adapter = locationAdapter
+        spinnerLocation!!.onItemSelectedListener = presenter.locationSpinnerOnItemsSelected()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -153,14 +132,17 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
             android.R.id.home -> finish()
             R.id.action_submit -> {
                 presenter.submit()
+                this.finish()
                 return true
             }
             R.id.action_delete ->{
                 presenter.delete()
+                this.finish()
                 startCalendarActivity()
                 return true
             }
             R.id.action_edit ->{
+                this.finish()
                 startEditableDetailsActivity()
                 return true
             }
@@ -171,8 +153,8 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
 
     override fun onClick(v: View?) {
         when(v?.id){
-            R.id.etDate -> presenter.createDateDialog().show(supportFragmentManager,"DatePicker")
-            R.id.etTime -> presenter.createTimeDialog().show(supportFragmentManager,"TimePicker")
+            R.id.etDate -> createDateDialog()
+            R.id.etTime -> createTimeDialog()
             R.id.switchNotification -> notificationSwitchClick()
             R.id.switchLocation -> placeSwitchClick()
             R.id.etLocation ->
@@ -183,31 +165,31 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
 
     private fun notificationSwitchClick() {
         when {
-            time.text.toString() == "" -> showErrorNotificationAndHideLayout()
+            etTime.text.toString() == "" -> showErrorNotificationAndHideLayout()
             presenter.getDateTimeFromEditTexts() <= DateTime.now() -> {
                 Toast.makeText(this,R.string.expired_event_notification,Toast.LENGTH_LONG).show()
-                notification.isChecked = false
-                notificationLayout.visibility = View.GONE
+                switchNotification.isChecked = false
+                linearLayoutNotification.visibility = View.GONE
             }
             else -> {
-                if (notification.isChecked) notificationLayout.visibility = View.VISIBLE
-                else notificationLayout.visibility = View.GONE
+                if (switchNotification.isChecked) linearLayoutNotification.visibility = View.VISIBLE
+                else linearLayoutNotification.visibility = View.GONE
             }
         }
     }
 
     private fun placeSwitchClick() {
-        if (locationSwitch!!.isChecked) locationChooseLayout.visibility = View.VISIBLE
+        if (switchLocation!!.isChecked) linearLayoutLocationChoose.visibility = View.VISIBLE
         else {
-            locationChooseLayout.visibility = View.GONE
+            linearLayoutLocationChoose.visibility = View.GONE
         }
     }
 
 
     override fun showErrorNotificationAndHideLayout() {
         Toast.makeText(this,R.string.notification_exception,Toast.LENGTH_LONG).show()
-        notification.isChecked = false
-        notificationLayout.visibility = View.GONE
+        switchNotification.isChecked = false
+        linearLayoutNotification.visibility = View.GONE
     }
 
     override fun startPlacePicker() {
@@ -234,7 +216,7 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
                 PLACE_PICKER_REQUEST -> {
                     val place = PlacePicker.getPlace(this,data)
                     presenter.createLocation(place)
-                    locationAddress.setText(place.address)
+                    etLocation.setText(place.address)
                 }
                 LOCATION_DETAILS_REQUEST ->{
                     presenter.onLocationDetailsResult(data!!.getBundleExtra("location").getLong("locationId"))
@@ -251,14 +233,12 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
     override fun startCalendarActivity(){
         val intentMainActivity = Intent(this, CalendarActivity::class.java)
         startActivity(intentMainActivity)
-        finish()
     }
 
     private fun startEditableDetailsActivity(){
         val intent = Intent(this, EventDetailsActivity::class.java)
         intent.putExtra("event",presenter.event)
         startActivity(intent)
-        finish()
     }
 
     override fun startLocationDetailsActivity(){
@@ -274,8 +254,136 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
         return component!!
     }
 
+    private fun createDateDialog() {
+        val datePickerDialogFragment = DatePickerDialogFragment()
+        val bundle = Bundle()
+        val dateTime = DateTime.parse(getDate(), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY))
+        bundle.putInt("day", dateTime.dayOfMonth)
+        bundle.putInt("month", dateTime.monthOfYear - 1)
+        bundle.putInt("year", dateTime.year)
+        datePickerDialogFragment.arguments = bundle
+
+        compositeDisposable.add(
+                datePickerDialogFragment.date
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            updateDate(it)
+                            if(getTime().isNotBlank())
+                                presenter.updateSpinnerItems()
+                        }
+        )
+
+        datePickerDialogFragment.show(supportFragmentManager, "DatePicker")
+    }
+
+    private fun createTimeDialog() {
+        val timePickerDialogFragment = TimePickerDialogFragment()
+        val bundle = Bundle()
+        bundle.putInt("hour", DateTime.now().hourOfDay)
+        bundle.putInt("minute", DateTime.now().minuteOfHour)
+        timePickerDialogFragment.arguments = bundle
+
+        compositeDisposable.add(
+                timePickerDialogFragment.time
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            updateTime(it)
+                            presenter.updateSpinnerItems()
+                        }
+        )
+
+        timePickerDialogFragment.show(supportFragmentManager, "TimePicker")
+    }
+
+
+
+    override fun getDate(): String {
+        return etDate.text.toString()
+    }
+
+    override fun getLocation(): String {
+        return etLocation.text.toString()
+    }
+
+    override fun getTime(): String {
+        return etTime.text.toString()
+    }
+
+    override fun getSummary(): String {
+        return etSummary.text.toString()
+    }
+
+    override fun isLocationChecked(): Boolean {
+        return switchLocation != null && switchLocation.isChecked
+    }
+
+    override fun isNotificationChecked(): Boolean {
+        return switchNotification.isChecked
+    }
+
+    override fun notifyLocationAdapter() {
+        locationAdapter.notifyDataSetChanged()
+    }
+
+    override fun notifyNotificationAdapter() {
+        notificationAdapter.notifyDataSetChanged()
+    }
+
+    override fun setLocationSpinnerSelecetion(position: Int) {
+        spinnerLocation.setSelection(position)
+    }
+
+    override fun setRemindSpinnerSelection(position: Int) {
+        spinnerRemind.setSelection(position)
+    }
+
+    override fun updateDate(date: String) {
+        etDate.setText(date)
+    }
+
+    override fun updateLocationCreationVisibility(value: Boolean) {
+        linearLayoutLocationCreation.visibility = if(value)
+            View.VISIBLE
+        else
+            View.GONE
+    }
+
+    override fun updateNotification(isEnabled: Boolean) {
+        switchNotification.isChecked = isEnabled
+        if(isEnabled)
+            linearLayoutNotification.visibility = View.VISIBLE
+        else
+            linearLayoutNotification.visibility = View.GONE
+    }
+
+    override fun updateLocationAddress(address: String) {
+        etLocation.setText(address)
+    }
+
+    override fun updateLocationChooseVisibility(value: Boolean) {
+        linearLayoutLocationChoose.visibility = if(value)
+            View.VISIBLE
+        else
+            View.GONE
+    }
+
+    override fun updateLocationSwitch(value: Boolean) {
+        switchLocation.isChecked = value
+    }
+
+    override fun updateSummary(summary: String) {
+        etSummary.setText(summary)
+    }
+
+    override fun updateTime(time: String) {
+        etTime.setText(time)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        compositeDisposable.dispose()
         component = null
     }
 

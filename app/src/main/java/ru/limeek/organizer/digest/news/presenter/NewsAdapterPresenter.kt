@@ -9,49 +9,51 @@ import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.digest.news.view.NewsAdapter
 import ru.limeek.organizer.model.news.Article
 import ru.limeek.organizer.model.news.News
-import ru.limeek.organizer.model.repository.Repository
+import ru.limeek.organizer.repository.NewsRepository
 import javax.inject.Inject
 
-class NewsAdapterPresenter (val newsAdapter : NewsAdapter) {
+class NewsAdapterPresenter(val newsAdapter: NewsAdapter) {
 
-    var news : News? = null
-    var disposable : Disposable? = null
+    var news: News? = null
+    var disposable: Disposable? = null
 
     @Inject
-    lateinit var repository : Repository
+    lateinit var repository: NewsRepository
 
-    init{
+    init {
         App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
         getNews()
     }
 
-    fun getNews(){
+    fun getNews() {
         disposable =
                 repository.newsApi
-                .getRecentNews()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        {news ->
-                            this.news = news
-                            newsAdapter.notifyDataSetChanged()},
-                        {error -> Log.wtf("NewsAdapterPresenter", "Error")
-                            error.printStackTrace()
-                        }
-                )
+                        .getRecentNews()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                { news ->
+                                    this.news = news
+                                    newsAdapter.notifyDataSetChanged()
+                                },
+                                { error ->
+                                    Log.wtf("NewsAdapterPresenter", "Error")
+                                    error.printStackTrace()
+                                }
+                        )
     }
 
-    fun getCount(): Int{
-        if(news != null)
+    fun getCount(): Int {
+        if (news != null)
             return news!!.totalResults!!
         return 0
     }
 
-    fun getItemAt(position: Int) : Article{
+    fun getItemAt(position: Int): Article {
         return news!!.articles!![position]
     }
 
-    fun onDestroy(){
+    fun onDestroy() {
         disposable!!.dispose()
         disposable = null
     }

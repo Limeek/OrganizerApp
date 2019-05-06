@@ -1,4 +1,4 @@
-package ru.limeek.organizer.model.Event
+package ru.limeek.organizer.model.event
 
 import android.os.Parcel
 import android.os.Parcelable

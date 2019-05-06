@@ -9,8 +9,8 @@ import io.reactivex.schedulers.Schedulers
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.locations.locationdetails.view.LocationDetailsView
-import ru.limeek.organizer.model.Location.Location
-import ru.limeek.organizer.model.repository.Repository
+import ru.limeek.organizer.model.location.Location
+import ru.limeek.organizer.repository.LocationRepository
 import javax.inject.Inject
 
 class LocationDetailsPresenterImpl (var locationDetailsView: LocationDetailsView?) : LocationDetailsPresenter {
@@ -18,7 +18,7 @@ class LocationDetailsPresenterImpl (var locationDetailsView: LocationDetailsView
     var disposable: Disposable? = null
 
     @Inject
-    lateinit var repository: Repository
+    lateinit var locationRepository: LocationRepository
 
     init {
         App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
@@ -26,19 +26,19 @@ class LocationDetailsPresenterImpl (var locationDetailsView: LocationDetailsView
 
     override fun delete() {
         disposable =
-                repository.database.locationDao()
-                .deleteLocation(location!!)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe()
+                locationRepository
+                    .deleteLocation(location!!)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe()
     }
 
     override fun submit() {
         disposable =
                 Observable.fromCallable{
                     if(locationDetailsView!!.getLocation() == null) {
-                        location!!.name = locationDetailsView!!.name.text.toString()
-                        val locationId = repository.database.locationDao().insert(location)
+                        location!!.name = locationDetailsView!!.getName()
+                        val locationId = locationRepository.insert(location!!)
                         if (locationDetailsView!!.getFromEventDetails() != null) {
                             val bundle = Bundle()
                             bundle.putLong("locationId",locationId)
@@ -47,9 +47,9 @@ class LocationDetailsPresenterImpl (var locationDetailsView: LocationDetailsView
                         else locationDetailsView!!.startLocationActivity()
                     }
                     else{
-                        val locationName = locationDetailsView!!.name.text.toString()
+                        val locationName = locationDetailsView!!.getAddress()
                         val updatedLocation = Location(location!!.id,location!!.latitude,location!!.longitude,locationName,location!!.address,location!!.createdByUser)
-                        repository.database.locationDao().update(updatedLocation)
+                        locationRepository.update(updatedLocation)
                         locationDetailsView!!.startLocationActivity()
                     }
                 }
@@ -65,9 +65,9 @@ class LocationDetailsPresenterImpl (var locationDetailsView: LocationDetailsView
             Location(location!!.id, place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString(), true)
     }
 
-    fun updateUI(){
-        locationDetailsView!!.name.setText(location!!.name)
-        locationDetailsView!!.address.setText(location!!.address)
+    private fun updateUI(){
+        locationDetailsView!!.updateName(location!!.name)
+        locationDetailsView!!.updateAddress(location!!.address)
     }
 
     override fun onCreate() {

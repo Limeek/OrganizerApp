@@ -6,8 +6,8 @@ import dagger.Provides
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.database.AppDatabase
 import ru.limeek.organizer.di.scopes.AppScope
-import ru.limeek.organizer.model.Event.EventDao
-import ru.limeek.organizer.model.Location.LocationDao
+import ru.limeek.organizer.model.event.EventDao
+import ru.limeek.organizer.model.location.LocationDao
 
 @Module
 class RoomModule(var app: App) {
@@ -31,7 +31,5 @@ class RoomModule(var app: App) {
     fun providesLocationDao() : LocationDao{
         return appDb.locationDao()
     }
-
-
 
 }

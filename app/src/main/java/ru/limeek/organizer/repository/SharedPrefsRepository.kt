@@ -1,4 +1,4 @@
-package ru.limeek.organizer.model
+package ru.limeek.organizer.repository
 
 import android.content.SharedPreferences
 import org.joda.time.DateTime
@@ -6,8 +6,7 @@ import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.util.Constants
 import javax.inject.Inject
 
-class OrganizerSharedPreferences @Inject constructor(var sharedPreferences: SharedPreferences) {
-
+class SharedPrefsRepository @Inject constructor(private var sharedPreferences: SharedPreferences) {
     fun putDateTime(key: String, data: DateTime){
         sharedPreferences.edit().putString(key,data.toString()).apply()
     }
@@ -25,7 +24,7 @@ class OrganizerSharedPreferences @Inject constructor(var sharedPreferences: Shar
         return dateTime.toString(DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY))
     }
 
-    fun getDateTime(key : String) : DateTime{
+    fun getDateTime(key : String) : DateTime {
         return DateTime.parse(sharedPreferences.getString(key,""))
     }
 }

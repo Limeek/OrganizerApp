@@ -1,14 +1,14 @@
 package ru.limeek.organizer.event.presenter
 
-import android.util.Log
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.event.view.EventsListAdapter
-import ru.limeek.organizer.model.Event.Event
-import ru.limeek.organizer.model.repository.Repository
+import ru.limeek.organizer.model.event.Event
+import ru.limeek.organizer.repository.EventRepository
+import ru.limeek.organizer.repository.SharedPrefsRepository
 import javax.inject.Inject
 
 class EventsAdapterPresenter (var eventsListAdapter: EventsListAdapter?) {
@@ -17,7 +17,10 @@ class EventsAdapterPresenter (var eventsListAdapter: EventsListAdapter?) {
     var events : List<Event> = listOf()
 
     @Inject
-    lateinit var repository: Repository
+    lateinit var eventRepository: EventRepository
+
+    @Inject
+    lateinit var sharedPrefsRepository: SharedPrefsRepository
 
     init {
         App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
@@ -25,13 +28,12 @@ class EventsAdapterPresenter (var eventsListAdapter: EventsListAdapter?) {
     }
 
     fun updateEvents(){
-        disposable = repository.database.eventDao().getEventsByDate(repository.sharedPreferences.getDateTime("cachedDate"))
+        disposable = eventRepository.getEventsByDate(sharedPrefsRepository.getDateTime("cachedDate"))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe { events ->
                     this.events = events
                     eventsListAdapter!!.notifyDataSetChanged()
-                    Log.wtf(logTag, this.events.toString())
                 }
     }
 

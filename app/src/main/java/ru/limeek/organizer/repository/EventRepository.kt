@@ -1,37 +1,44 @@
-package ru.limeek.organizer.model.Event
+package ru.limeek.organizer.repository
 
-import android.arch.persistence.room.*
 import io.reactivex.Flowable
 import org.joda.time.DateTime
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.database.DateConverter
 import ru.limeek.organizer.model.EventWithLocation
+import ru.limeek.organizer.model.event.Event
+import ru.limeek.organizer.model.event.EventDao
+import ru.limeek.organizer.model.location.LocationDao
+import javax.inject.Inject
 
-@Dao
-abstract class EventDao{
-    @Query("SELECT * FROM EVENTS E LEFT JOIN LOCATIONS L ON E.event_location_id = L.location_id")
-    abstract fun getEventsWithLocationAll() : Flowable<List<EventWithLocation>>
+class EventRepository @Inject constructor(var eventDao: EventDao,
+                                          var locationDao: LocationDao) {
 
-    @Query("SELECT * FROM EVENTS E LEFT JOIN LOCATIONS L ON E.event_location_id = L.location_id WHERE id = :id")
-    abstract fun getEventWithLocationById(id : Long) : Flowable<EventWithLocation>
+    private fun getEventsWithLocationAll(): Flowable<List<EventWithLocation>> {
+        return eventDao.getEventsWithLocationAll()
+    }
 
-    @Query("SELECT * FROM EVENTS E LEFT JOIN LOCATIONS L ON E.event_location_id = L.location_id WHERE date_time LIKE :date || '%'")
-    abstract fun getEventsWithLocationByDate(@TypeConverters(DateConverter::class) date : DateTime) : Flowable<List<EventWithLocation>>
+    private fun getEventsWithLocationByDate(date: DateTime) : Flowable<List<EventWithLocation>> {
+        return eventDao.getEventsWithLocationByDate(date)
+    }
 
-    @Query("SELECT * FROM EVENTS WHERE event_location_id = :locationId")
-    abstract fun getEventsByLocationId(locationId: Long) : Flowable<List<Event>>
+    private fun getEventWithLocationById(id: Long): Flowable<EventWithLocation>{
+        return eventDao.getEventWithLocationById(id)
+    }
 
-    @Insert
-    abstract fun insert(event: Event) : Long
+    private fun getEventsByLocationId(locationId: Long): Flowable<List<Event>>{
+        return eventDao.getEventsByLocationId(locationId)
+    }
 
-    @Delete
-    abstract fun delete(event: Event?)
+    fun insert(event: Event): Long{
+        return eventDao.insert(event)
+    }
 
-    @Update
-    abstract fun update(event: Event?)
+    fun delete(event: Event){
+        eventDao.delete(event)
+    }
 
-    @Update
-    abstract fun update(events : List<Event>)
+    fun update(event: Event){
+        eventDao.update(event)
+    }
 
     fun getEventById(id : Long) : Flowable<Event>{
         return getEventWithLocationById(id)
@@ -73,7 +80,7 @@ abstract class EventDao{
         val eventId : Long
         when {
             event.location != null -> {
-                locationId = App.instance.database.locationDao().insert(event.location)
+                locationId = locationDao.insert(event.location)
                 event.locationId = locationId
                 eventId = insert(event)
             }
@@ -91,27 +98,27 @@ abstract class EventDao{
     fun updateEventWithAddedLocation(event: Event){
         if(event.locationId != null) update(event)
         else{
-            val locationId = App.instance.database.locationDao().insert(event.location)
+            val locationId = locationDao.insert(event.location)
             event.locationId = locationId
             update(event)
         }
     }
 
     fun updateEventWithCustomToCustomLoc(event: Event){
-        val locationId = App.instance.database.locationDao().upsert(event.location!!)
+        val locationId = locationDao.upsert(event.location!!)
         event.locationId = locationId
         update(event)
     }
 
     fun updateEventWithUserToCustomLoc(event: Event){
-        val locationId = App.instance.database.locationDao().insert(event.location!!)
+        val locationId = locationDao.insert(event.location!!)
         event.locationId = locationId
         update(event)
     }
 
     fun updateEventWithCustomToUserLoc(event: Event){
         update(event)
-        App.instance.database.locationDao().delete(event.location)
+        locationDao.delete(event.location)
     }
 
     fun updateEventWithUserLocDelete(event: Event){
@@ -122,13 +129,13 @@ abstract class EventDao{
     fun updateEventWithCustLocDelete(event: Event){
         event.locationId = null
         update(event)
-        App.instance.database.locationDao().delete(event.location)
+        locationDao.delete(event.location)
     }
 
     fun deleteEvent(event: Event){
         if(event.location != null && !event.location!!.createdByUser){
             delete(event)
-            App.instance.database.locationDao().delete(event.location)
+            locationDao.delete(event.location)
         }
         else
             delete(event)

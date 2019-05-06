@@ -1,7 +1,7 @@
 package ru.limeek.organizer.database
 
 import android.arch.persistence.room.TypeConverter
-import ru.limeek.organizer.model.Event.RemindTime
+import ru.limeek.organizer.model.event.RemindTime
 
 object RemindTimeConverter {
     @TypeConverter

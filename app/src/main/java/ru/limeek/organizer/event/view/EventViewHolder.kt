@@ -7,7 +7,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.events_item.view.*
 import ru.limeek.organizer.event.eventdetails.view.EventDetailsActivity
 import ru.limeek.organizer.event.presenter.EventsViewHolderPresenter
-import ru.limeek.organizer.model.Event.Event
+import ru.limeek.organizer.model.event.Event
 
 class EventViewHolder(view : View) : RecyclerView.ViewHolder(view) {
     var presenter : EventsViewHolderPresenter = EventsViewHolderPresenter(this)
