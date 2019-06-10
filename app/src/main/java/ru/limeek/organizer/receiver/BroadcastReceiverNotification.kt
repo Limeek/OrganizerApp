@@ -5,12 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import android.util.Log
 import org.joda.time.DateTime
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.event.eventdetails.view.EventDetailsActivity
+import ru.limeek.organizer.views.EventDetailsActivity
 import ru.limeek.organizer.util.Constants
 
 class BroadcastReceiverNotification : BroadcastReceiver() {

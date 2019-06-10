@@ -1,6 +1,6 @@
 package ru.limeek.organizer.database
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.util.Constants

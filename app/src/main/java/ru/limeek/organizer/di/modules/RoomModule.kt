@@ -1,13 +1,13 @@
 package ru.limeek.organizer.di.modules
 
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.database.AppDatabase
 import ru.limeek.organizer.di.scopes.AppScope
-import ru.limeek.organizer.model.event.EventDao
-import ru.limeek.organizer.model.location.LocationDao
+import ru.limeek.organizer.data.model.event.EventDao
+import ru.limeek.organizer.data.model.location.LocationDao
 
 @Module
 class RoomModule(var app: App) {
@@ -28,7 +28,7 @@ class RoomModule(var app: App) {
 
     @AppScope
     @Provides
-    fun providesLocationDao() : LocationDao{
+    fun providesLocationDao() : LocationDao {
         return appDb.locationDao()
     }
 

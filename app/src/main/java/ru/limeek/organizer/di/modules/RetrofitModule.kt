@@ -6,8 +6,8 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.limeek.organizer.BuildConfig
-import ru.limeek.organizer.api.DarkSkyApi
-import ru.limeek.organizer.api.NewsApi
+import ru.limeek.organizer.data.api.DarkSkyApi
+import ru.limeek.organizer.data.api.NewsApi
 import ru.limeek.organizer.di.scopes.AppScope
 
 @Module

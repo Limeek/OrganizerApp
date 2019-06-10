@@ -3,12 +3,12 @@ package ru.limeek.organizer.di.modules
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
-import ru.limeek.organizer.api.DarkSkyApi
-import ru.limeek.organizer.api.NewsApi
+import ru.limeek.organizer.data.api.DarkSkyApi
+import ru.limeek.organizer.data.api.NewsApi
 import ru.limeek.organizer.di.scopes.PresenterScope
-import ru.limeek.organizer.model.event.EventDao
-import ru.limeek.organizer.model.location.LocationDao
-import ru.limeek.organizer.repository.*
+import ru.limeek.organizer.data.model.event.EventDao
+import ru.limeek.organizer.data.model.location.LocationDao
+import ru.limeek.organizer.data.repository.*
 
 @Module
 class RepositoryModule{

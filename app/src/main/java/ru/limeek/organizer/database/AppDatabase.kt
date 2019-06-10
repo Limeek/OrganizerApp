@@ -1,14 +1,14 @@
 package ru.limeek.organizer.database
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
-import android.arch.persistence.room.migration.Migration
-import ru.limeek.organizer.model.event.Event
-import ru.limeek.organizer.model.event.EventDao
-import ru.limeek.organizer.model.location.Location
-import ru.limeek.organizer.model.location.LocationDao
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import ru.limeek.organizer.data.model.event.Event
+import ru.limeek.organizer.data.model.event.EventDao
+import ru.limeek.organizer.data.model.location.Location
+import ru.limeek.organizer.data.model.location.LocationDao
 
 @Database(entities = arrayOf(Event::class, Location::class),version = 6,exportSchema = false)
 @TypeConverters(DateTimeConverter::class)
