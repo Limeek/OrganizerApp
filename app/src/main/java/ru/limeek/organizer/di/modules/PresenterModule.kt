@@ -2,8 +2,6 @@ package ru.limeek.organizer.di.modules
 
 import dagger.Module
 import dagger.Provides
-import ru.limeek.organizer.presenters.CalendarPresenter
-import ru.limeek.organizer.presenters.CalendarPresenterImpl
 import ru.limeek.organizer.di.scopes.ViewScope
 import ru.limeek.organizer.presenters.EventDetailsPresenter
 import ru.limeek.organizer.presenters.EventDetailsPresenterImpl
@@ -17,11 +15,11 @@ import ru.limeek.organizer.views.*
 
 @Module
 class PresenterModule(val view: View) {
-    @Provides
-    @ViewScope
-    fun provideCalendarPresenter() : CalendarPresenter {
-        return CalendarPresenterImpl(view as CalendarFragment)
-    }
+//    @Provides
+//    @ViewScope
+//    fun provideCalendarPresenter() : CalendarPresenter {
+//        return CalendarPresenterImpl(view as CalendarFragment)
+//    }
 
     @Provides
     @ViewScope

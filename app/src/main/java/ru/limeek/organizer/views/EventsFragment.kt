@@ -2,60 +2,51 @@ package ru.limeek.organizer.views
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_calendar_events.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
+import ru.limeek.organizer.databinding.FragmentCalendarEventsBinding
+import ru.limeek.organizer.databinding.FragmentCalendarEventsBindingImpl
 import ru.limeek.organizer.di.components.ViewComponent
+import ru.limeek.organizer.di.components.ViewViewModelComponent
 import ru.limeek.organizer.di.modules.PresenterModule
-import ru.limeek.organizer.presenters.EventsPresenter
+import ru.limeek.organizer.di.modules.ViewModelModule
+import ru.limeek.organizer.viewmodels.EventsViewModel
 import javax.inject.Inject
 
 class EventsFragment : EventFragmentView, Fragment(){
-
     val logTag = "EventsFragment"
 
-    lateinit var recView : RecyclerView
-    var recAdapter : EventsListAdapter? = null
-    lateinit var fab : FloatingActionButton
-    @Inject
-    lateinit var presenter : EventsPresenter
 
-    private var component : ViewComponent? = null
+
+
+    @Inject
+    lateinit var viewModel: EventsViewModel
+    private lateinit var binding: FragmentCalendarEventsBinding
+
+    var adapter : EventsListAdapter? = null
+    private var component : ViewViewModelComponent? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view : View = inflater.inflate(R.layout.fragment_calendar_events,container,false)
-
+        val binding = FragmentCalendarEventsBinding.inflate(inflater ,container,false)
         getViewComponent().inject(this)
-
-        presenter.onCreate()
-
-        recAdapter = EventsListAdapter(context)
-        recView = view.findViewById(R.id.recViewEvents)
-        recView.apply {
-            setHasFixedSize(true)
-            addItemDecoration(DividerItemDecoration(context, VERTICAL))
-            layoutManager = LinearLayoutManager(context)
-            adapter = recAdapter
-        }
-
-        fab = view.findViewById(R.id.floatingButton)
-        fab.setOnClickListener(presenter.onFabClick())
-
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        adapter = EventsListAdapter()
+        binding.recViewEvents.apply {
+            addItemDecoration(DividerItemDecoration(context, VERTICAL))
+            adapter = adapter
+        }
         refreshDateText()
     }
 
@@ -65,18 +56,18 @@ class EventsFragment : EventFragmentView, Fragment(){
     }
 
     override fun refreshRecyclerView() {
-        recAdapter!!.refreshRecycler()
+        adapter!!.refreshRecycler()
     }
 
-    private fun getViewComponent() : ViewComponent{
+    private fun getViewComponent() : ViewViewModelComponent{
         if(component == null){
-            component = App.instance.component.newViewComponent(PresenterModule(this))
+            component = App.instance.component.newViewViewModelComponent(ViewModelModule())
         }
         return component!!
     }
 
     private fun refreshDateText(){
-        tvCurrentDate.text = presenter.getCurrentDateString()
+        tvCurrentDate.text = viewModel.getCurrentDateString()
     }
 
     fun refresh(){
@@ -86,8 +77,7 @@ class EventsFragment : EventFragmentView, Fragment(){
 
     override fun onDestroy() {
         super.onDestroy()
-        recAdapter!!.onDestroy()
-        presenter.onDestroy()
+        adapter!!.onDestroy()
         component = null
     }
 }

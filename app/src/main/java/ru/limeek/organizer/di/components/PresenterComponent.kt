@@ -1,7 +1,6 @@
 package ru.limeek.organizer.di.components
 
 import dagger.Subcomponent
-import ru.limeek.organizer.presenters.CalendarPresenterImpl
 import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.di.scopes.PresenterScope
 import ru.limeek.organizer.presenters.NewsAdapterPresenter

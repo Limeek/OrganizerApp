@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import ru.limeek.organizer.R
 import ru.limeek.organizer.presenters.EventsAdapterPresenter
 
-class EventsListAdapter(var context : Context?) : RecyclerView.Adapter<EventViewHolder>(){
+class EventsListAdapter() : RecyclerView.Adapter<EventViewHolder>(){
 
     var presenter : EventsAdapterPresenter = EventsAdapterPresenter(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
-        return EventViewHolder(LayoutInflater.from(context).inflate(R.layout.events_item, parent, false))
+        return EventViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.events_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {

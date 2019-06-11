@@ -7,24 +7,29 @@ import android.os.Bundle
 import com.google.android.material.navigation.NavigationView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.di.components.ViewComponent
+import ru.limeek.organizer.databinding.ActivityMainBinding
+import ru.limeek.organizer.di.components.ViewViewModelComponent
+import ru.limeek.organizer.di.modules.ViewModelModule
+import ru.limeek.organizer.viewmodels.MainViewModel
+import javax.inject.Inject
 
 class MainActivity : MainView, AppCompatActivity()  {
 
-    private var component : ViewComponent? = null
+    private var component : ViewViewModelComponent? = null
+    private lateinit var binding: ActivityMainBinding
+    @Inject
+    lateinit var viewModel: MainViewModel
 
     private lateinit var calendarFragment: CalendarFragment
     private lateinit var eventFragment : EventsFragment
-    private lateinit var navigation : NavigationView
-    private lateinit var drawer : DrawerLayout
-    private val LOG_TAG : String = "MainActivity"
+
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
 
     private val navigationItemClick = NavigationView.OnNavigationItemSelectedListener { item ->
@@ -42,7 +47,7 @@ class MainActivity : MainView, AppCompatActivity()  {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item?.itemId){
             android.R.id.home -> {
-                drawer.openDrawer(GravityCompat.START)
+                drawerLayout.openDrawer(GravityCompat.START)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -51,23 +56,17 @@ class MainActivity : MainView, AppCompatActivity()  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        getViewComponent().inject(this)
 
-        eventFragment = EventsFragment()
-        calendarFragment = CalendarFragment()
-        drawer = drawerLayout
-        navigation = navView
-
-        supportFragmentManager.beginTransaction().replace(R.id.calendarFragContainer, calendarFragment).commit()
-        supportFragmentManager.beginTransaction().replace(R.id.fragContainer, eventFragment).commit()
+        initBinding()
+        initFragments()
 
         supportActionBar!!.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
 
-        navigation.setNavigationItemSelectedListener(navigationItemClick)
-
+        navView.setNavigationItemSelectedListener(navigationItemClick)
         checkAndRequestPermissions()
     }
 
@@ -80,6 +79,18 @@ class MainActivity : MainView, AppCompatActivity()  {
        startActivity(locationsIntent)
        finish()
    }
+
+    private fun initBinding(){
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.viewModel = viewModel
+    }
+
+    private fun initFragments(){
+        eventFragment = EventsFragment()
+        calendarFragment = CalendarFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.calendarFragContainer, calendarFragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragContainer, eventFragment).commit()
+    }
 
     private fun startDigestActivity(){
         if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -94,10 +105,9 @@ class MainActivity : MainView, AppCompatActivity()  {
         }
     }
 
-    private fun getViewComponent() {
-//            component = App.instance.component.newViewComponent(PresenterModule(this))
-//        }
-//        return component!!
+    private fun getViewComponent(): ViewViewModelComponent {
+        component = App.instance.component.newViewViewModelComponent(ViewModelModule(this))
+        return component!!
     }
 
     private fun checkAndRequestPermissions(){

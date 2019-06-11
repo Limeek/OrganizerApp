@@ -8,10 +8,8 @@ import ru.limeek.organizer.views.*
 @Subcomponent(modules = [PresenterModule::class])
 @ViewScope
 interface ViewComponent {
-    fun inject(mainActivity: MainActivity)
     fun inject(eventsFragment: EventsFragment)
     fun inject(eventDetailsActivity: EventDetailsActivity)
     fun inject(locationActivity: LocationActivity)
     fun inject(locationDetailsActivity: LocationDetailsActivity)
-    fun inject(calendarFragment: CalendarFragment)
 }

@@ -4,34 +4,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CalendarView
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.calendar_fragment.*
-import ru.limeek.organizer.R
+import androidx.lifecycle.Observer
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.di.modules.PresenterModule
-import ru.limeek.organizer.presenters.CalendarPresenter
+import ru.limeek.organizer.databinding.CalendarFragmentBinding
+import ru.limeek.organizer.di.modules.ViewModelModule
+import ru.limeek.organizer.viewmodels.CalendarViewModel
 import javax.inject.Inject
 
-class CalendarFragment: AppCalendarView,Fragment() {
+class CalendarFragment: Fragment() {
+    private lateinit var binding: CalendarFragmentBinding
+
     @Inject
-    lateinit var presenter: CalendarPresenter
+    lateinit var viewModel: CalendarViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.calendar_fragment, container, false)
+        binding = CalendarFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        App.instance.component.newViewComponent(PresenterModule(this)).inject(this)
-        presenter.onCreate()
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            presenter.onDateChange(dayOfMonth, month, year)
-            (activity as? MainActivity)?.refreshEventsFragment()
-        }
+        App.instance.component.newViewViewModelComponent(ViewModelModule(this)).inject(this)
+        viewModel.onCreate()
+        binding.viewModel = viewModel
+        observeLiveData()
     }
 
-    override fun setDate(millis: Long) {
-        calendarView.setDate(millis,false,true)
+    private fun observeLiveData(){
+        viewModel.refreshEventFragment.observe(this, Observer{
+            (activity as? MainActivity)?.refreshEventsFragment()
+        })
     }
 }
