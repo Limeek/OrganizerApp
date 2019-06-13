@@ -11,7 +11,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
-import com.squareup.leakcanary.LeakCanary
 import org.joda.time.DateTime
 import ru.limeek.organizer.R
 import ru.limeek.organizer.di.components.AppComponent

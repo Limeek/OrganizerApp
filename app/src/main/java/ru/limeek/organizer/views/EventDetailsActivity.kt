@@ -7,12 +7,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.places.ui.PlacePicker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -21,12 +22,12 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.di.components.ViewComponent
-import ru.limeek.organizer.di.modules.PresenterModule
-import ru.limeek.organizer.presenters.EventDetailsPresenter
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.model.event.RemindTime
 import ru.limeek.organizer.data.model.location.LocationSpinnerItem
+import ru.limeek.organizer.di.components.ViewComponent
+import ru.limeek.organizer.di.modules.PresenterModule
+import ru.limeek.organizer.presenters.EventDetailsPresenter
 import ru.limeek.organizer.util.Constants
 import javax.inject.Inject
 

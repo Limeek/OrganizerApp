@@ -5,10 +5,10 @@ import dagger.Module
 import dagger.Provides
 import ru.limeek.organizer.data.api.DarkSkyApi
 import ru.limeek.organizer.data.api.NewsApi
-import ru.limeek.organizer.di.scopes.PresenterScope
 import ru.limeek.organizer.data.model.event.EventDao
 import ru.limeek.organizer.data.model.location.LocationDao
 import ru.limeek.organizer.data.repository.*
+import ru.limeek.organizer.di.scopes.PresenterScope
 
 @Module
 class RepositoryModule{

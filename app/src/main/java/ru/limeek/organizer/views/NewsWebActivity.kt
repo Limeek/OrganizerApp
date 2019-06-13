@@ -1,10 +1,10 @@
 package ru.limeek.organizer.views
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_news_web.*
 import ru.limeek.organizer.R
 

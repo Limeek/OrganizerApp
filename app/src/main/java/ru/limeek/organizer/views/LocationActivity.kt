@@ -4,38 +4,38 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationView
-import androidx.core.app.ActivityCompat
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_location.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.di.components.ViewComponent
-import ru.limeek.organizer.di.modules.PresenterModule
-import ru.limeek.organizer.presenters.LocationPresenter
+import ru.limeek.organizer.data.model.location.Location
+import ru.limeek.organizer.databinding.ActivityLocationBinding
+import ru.limeek.organizer.di.components.ViewViewModelComponent
+import ru.limeek.organizer.di.modules.ViewModelModule
+import ru.limeek.organizer.viewmodels.LocationViewModel
 import javax.inject.Inject
 
-class LocationActivity : LocationView, AppCompatActivity() {
+class LocationActivity : AppCompatActivity() {
     private val LOG_TAG = "LocationActivity"
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
-    private var component : ViewComponent? = null
-    private lateinit var fab : FloatingActionButton
-    private lateinit var navigation : NavigationView
-    private lateinit var drawer : DrawerLayout
-    private lateinit var recView : RecyclerView
-    private lateinit var recAdapter : LocationsAdapter
+    private var component : ViewViewModelComponent? = null
+
+    private lateinit var binding: ActivityLocationBinding
 
     @Inject
-    lateinit var presenter : LocationPresenter
+    lateinit var viewModel: LocationViewModel
+    private var onAdapterItemClick = fun(location: Location){
+        startDetailsActivity(location)
+    }
+    var adapter = LocationsAdapter().apply { onItemClick = onAdapterItemClick }
+
 
 
     private val navigationItemClick = NavigationView.OnNavigationItemSelectedListener { item ->
@@ -53,7 +53,7 @@ class LocationActivity : LocationView, AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
          return when(item?.itemId){
             android.R.id.home -> {
-                drawer.openDrawer(GravityCompat.START)
+                binding.drawerLayout.openDrawer(GravityCompat.START)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -63,34 +63,39 @@ class LocationActivity : LocationView, AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_location)
 
         getViewComponent().inject(this)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_location)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        binding.adapter = adapter
 
         supportActionBar!!.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         }
-        drawer = drawerLayout
-        fab = fabLocation
-        fab.setOnClickListener(presenter.fabOnClick())
-        navigation = navView
-        recAdapter = LocationsAdapter(this)
-        recView = recyclerView
-        recView.apply {
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-            addItemDecoration(DividerItemDecoration(context, VERTICAL))
-            adapter = recAdapter
-        }
 
         navView.setNavigationItemSelectedListener(navigationItemClick)
+        viewModel.onCreate()
+        observeLiveData()
     }
 
-    override fun startDetailsActivity() {
+    private fun startDetailsActivity(location: Location? = null) {
         val detailsIntent = Intent(this, LocationDetailsActivity::class.java)
+        if(location != null){
+            val bundle = Bundle()
+            bundle.putParcelable("location", location)
+            detailsIntent.putExtras(bundle)
+        }
         startActivity(detailsIntent)
         finish()
+    }
+
+    private fun observeLiveData(){
+        viewModel.startDetailsActivity.observe(this, Observer {
+            startDetailsActivity()
+        })
     }
 
     private fun startCalendarActivity(){
@@ -112,9 +117,9 @@ class LocationActivity : LocationView, AppCompatActivity() {
         }
     }
 
-    private fun getViewComponent() : ViewComponent {
+    private fun getViewComponent() : ViewViewModelComponent {
         if(component == null){
-            component = App.instance.component.newViewComponent(PresenterModule(this))
+            component = App.instance.component.newViewViewModelComponent(ViewModelModule(this))
         }
         return component!!
     }
@@ -122,6 +127,5 @@ class LocationActivity : LocationView, AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         component = null
-        recAdapter.onDestroy()
     }
 }

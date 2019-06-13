@@ -1,30 +1,29 @@
 package ru.limeek.organizer.views
 
-import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import ru.limeek.organizer.R
-import ru.limeek.organizer.presenters.LocationsAdapterPresenter
+import androidx.recyclerview.widget.RecyclerView
+import ru.limeek.organizer.data.model.location.Location
+import ru.limeek.organizer.databinding.LocationItemBinding
 
-class LocationsAdapter(var context: Context) : RecyclerView.Adapter<LocationViewHolder>() {
-    var presenter : LocationsAdapterPresenter = LocationsAdapterPresenter(this)
+class LocationsAdapter : RecyclerView.Adapter<LocationsAdapter.LocationVH>() {
+
+    var dataset: List<Location> = listOf()
+    lateinit var onItemClick: (Location) -> Unit
 
     override fun getItemCount(): Int {
-        return presenter.getCount()
+        return dataset.size
     }
 
-    override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
-        holder.presenter.locationsAdapterPresenter = presenter
-        holder.presenter.position = position
-        holder.presenter.bind()
+    override fun onBindViewHolder(holder: LocationVH, position: Int) {
+        holder.binding.location = dataset[position]
+        holder.binding.root.setOnClickListener { onItemClick.invoke(dataset[position]) }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
-        return LocationViewHolder(LayoutInflater.from(context).inflate(R.layout.location_item, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationVH {
+        val binding = LocationItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return LocationVH(binding)
     }
 
-    fun onDestroy(){
-        presenter.onDestroy()
-    }
+    class LocationVH(var binding: LocationItemBinding): RecyclerView.ViewHolder(binding.root)
 }

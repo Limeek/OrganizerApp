@@ -1,10 +1,10 @@
 package ru.limeek.organizer.database
 
-import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.model.event.EventDao
 import ru.limeek.organizer.data.model.location.Location

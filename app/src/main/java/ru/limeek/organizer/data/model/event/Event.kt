@@ -1,20 +1,19 @@
 package ru.limeek.organizer.data.model.event
 
-import androidx.room.*
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.*
 import org.joda.time.DateTime
+import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.database.DateTimeConverter
 import ru.limeek.organizer.database.RemindTimeConverter
-import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.util.Constants
 
 @Entity(tableName = "events",
         foreignKeys = [(ForeignKey(
                 entity = Location::class,
                 parentColumns = [("location_id")],
-                childColumns = [("event_location_id")],
-                onDelete = ForeignKey.NO_ACTION
+                childColumns = [("event_location_id")]
         ))],
         indices = [(Index("event_location_id"))]
 )

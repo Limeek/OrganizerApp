@@ -11,4 +11,7 @@ interface ViewViewModelComponent {
     fun inject(mainActivity: MainActivity)
     fun inject(calendarFragment: CalendarFragment)
     fun inject(eventsFragment: EventsFragment)
+    fun inject(weatherFragment: WeatherFragment)
+    fun inject(newsFragment: NewsFragment)
+    fun inject(locationActivity: LocationActivity)
 }

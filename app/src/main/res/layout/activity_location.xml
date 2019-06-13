@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="ru.limeek.organizer.viewmodels.LocationViewModel" />
+        <variable
+            name="adapter"
+            type="ru.limeek.organizer.views.LocationsAdapter"/>
+    </data>
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,6 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            verticalDecoration="@{true}"
+            data="@{viewModel.locations}"
+            adapter="@{adapter}"
             tools:listitem="@layout/location_item">
 
         </androidx.recyclerview.widget.RecyclerView>
@@ -31,6 +44,7 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
+            android:onClick="@{() -> viewModel.onFabClick()}"
             app:backgroundTint="@color/colorPrimaryDark"
             app:layout_anchor="@+id/recyclerView"
             app:layout_anchorGravity="right|bottom"
@@ -45,3 +59,4 @@
         android:fitsSystemWindows="true"
         app:menu="@menu/navigation" />
 </androidx.drawerlayout.widget.DrawerLayout>
+</layout>

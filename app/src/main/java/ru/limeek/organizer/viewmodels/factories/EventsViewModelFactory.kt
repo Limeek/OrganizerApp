@@ -7,8 +7,8 @@ import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.viewmodels.EventsViewModel
 import javax.inject.Inject
 
-class EventsViewModelFactory @Inject constructor(var sharedPrefRepo: SharedPrefsRepository,
-                                                 var eventsRepo: EventRepository): ViewModelProvider.Factory {
+class EventsViewModelFactory @Inject constructor(private var sharedPrefRepo: SharedPrefsRepository,
+                                                 private var eventsRepo: EventRepository): ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(EventsViewModel::class.java)){

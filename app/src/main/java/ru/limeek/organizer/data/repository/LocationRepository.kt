@@ -1,7 +1,7 @@
 package ru.limeek.organizer.data.repository
 
-import io.reactivex.Flowable
-import ru.limeek.organizer.data.model.event.Event
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.limeek.organizer.data.model.event.EventDao
 import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.data.model.location.LocationDao
@@ -9,35 +9,44 @@ import javax.inject.Inject
 
 class LocationRepository @Inject constructor(var locationDao: LocationDao,
                                              var eventDao: EventDao) {
-    fun insert(location: Location): Long{
-        return locationDao.insert(location)
+    suspend fun insert(location: Location): Long{
+        return withContext(Dispatchers.IO) {
+            locationDao.insert(location)
+        }
     }
 
-    fun update(location: Location){
-        locationDao.update(location)
+    suspend fun update(location: Location){
+        return withContext(Dispatchers.IO) {
+            locationDao.update(location)
+        }
     }
 
-    fun delete(location: Location){
-        locationDao.delete(location)
+    suspend fun delete(location: Location){
+        withContext(Dispatchers.IO){
+            locationDao.delete(location)
+        }
     }
 
-    fun getUserCreatedLocations(): Flowable<List<Location>>{
-        return locationDao.getUserCreatedLocations()
+    suspend fun getUserCreatedLocations(): List<Location>{
+        return withContext(Dispatchers.IO){
+            locationDao.getUserCreatedLocations()
+        }
     }
 
-    fun getLocationById(id: Long): Flowable<Location>{
-        return locationDao.getLocationById(id)
+    suspend fun getLocationById(id: Long): Location?{
+        return withContext(Dispatchers.IO){
+            locationDao.getLocationById(id)
+        }
     }
 
-    fun deleteLocation(location: Location) : Flowable<Unit> {
-        return eventDao.getEventsByLocationId(location.id)
-                .flatMap{ events ->
-                    Flowable.fromCallable {
-                        for(event : Event in events)
-                            event.locationId = null
-                        eventDao.update(events)
-                        delete(location)
-                    }
-                }
+    suspend fun deleteLocation(location: Location){
+        return withContext(Dispatchers.IO){
+            val events = eventDao.getEventsByLocationId(location.id)
+            events.forEach {
+                it.locationId = null
+            }
+            eventDao.update(events)
+            delete(location)
+        }
     }
 }

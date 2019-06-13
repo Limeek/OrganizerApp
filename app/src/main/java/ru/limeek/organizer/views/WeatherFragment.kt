@@ -2,68 +2,75 @@ package ru.limeek.organizer.views
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.thbs.skycons.library.*
-import ru.limeek.organizer.R
-import ru.limeek.organizer.presenters.WeatherPresenterImpl
+import ru.limeek.organizer.app.App
+import ru.limeek.organizer.databinding.FragmentWeatherBinding
+import ru.limeek.organizer.di.modules.ViewModelModule
+import ru.limeek.organizer.viewmodels.WeatherViewModel
+import javax.inject.Inject
 
-class WeatherFragment : WeatherFragmentView, Fragment() {
-
-    override lateinit var degrees: TextView
-    override lateinit var description: TextView
-    override lateinit var icon: SkyconView
-    override lateinit var city: TextView
-    override lateinit var iconLayout: LinearLayout
-
-    var presenter = WeatherPresenterImpl(this)
+class WeatherFragment : Fragment() {
+    private lateinit var binding: FragmentWeatherBinding
+    @Inject
+    lateinit var viewModel: WeatherViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_weather, container, false)
-
-        degrees = view.findViewById(R.id.tvDegrees)
-        description = view.findViewById(R.id.tvDescr)
-        city = view.findViewById(R.id.tvCity)
-        iconLayout = view.findViewById(R.id.linLayoutIcon)
-
-        presenter.onCreate()
-
-        return view
+        binding = FragmentWeatherBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
-    override fun setWeatherIcon(iconString : String){
-        when(iconString){
-            "clear-day" -> icon = SunView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "clear-night" -> icon = MoonView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "rain" -> icon = CloudRainView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "snow" -> icon = CloudSnowView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "sleet" -> icon = CloudSnowView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "wind" -> icon = WindView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "fog" -> icon = CloudFogView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "cloudy" -> icon = CloudView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "partly-cloudy-day" -> icon = CloudSunView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "partly-cloudy-night" -> icon = CloudMoonView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
-            "thunder" -> icon = CloudThunderView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        injectComponent()
+        binding.viewModel = viewModel
+        viewModel.onCreate()
+        observeLiveData()
+    }
+
+    private fun observeLiveData(){
+        viewModel.iconString.observe(this, Observer{
+            setWeatherIcon(it)
+        })
+    }
+
+    private fun setWeatherIcon(iconString : String){
+        val icon: SkyconView = when(iconString){
+            "clear-day" -> SunView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "clear-night" -> MoonView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "rain" -> CloudRainView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "snow" -> CloudSnowView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "sleet" -> CloudSnowView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "wind" -> WindView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "fog" -> CloudFogView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "cloudy" -> CloudView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "partly-cloudy-day" -> CloudSunView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "partly-cloudy-night" -> CloudMoonView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            "thunder" -> CloudThunderView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
+            else -> SunView(context,true,true, Color.parseColor("#000000"), android.R.color.transparent)
         }
-        addIconToLayout()
+        addIconToLayout(icon)
     }
 
-    private fun addIconToLayout(){
+    private fun addIconToLayout(icon: SkyconView){
         val linLayoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        iconLayout.layoutParams = linLayoutParams
+        binding.linLayoutIcon.layoutParams = linLayoutParams
         linLayoutParams.height = 400
         linLayoutParams.width = 400
-        iconLayout.addView(icon)
+        binding.linLayoutIcon.addView(icon)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onDestroy()
     }
 
+    private fun injectComponent(){
+        App.instance.component.newViewViewModelComponent(ViewModelModule(this)).inject(this)
+    }
 }

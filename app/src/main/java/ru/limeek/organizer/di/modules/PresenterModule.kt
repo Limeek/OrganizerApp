@@ -5,13 +5,11 @@ import dagger.Provides
 import ru.limeek.organizer.di.scopes.ViewScope
 import ru.limeek.organizer.presenters.EventDetailsPresenter
 import ru.limeek.organizer.presenters.EventDetailsPresenterImpl
-import ru.limeek.organizer.presenters.EventsPresenter
-import ru.limeek.organizer.presenters.EventsPresenterImpl
 import ru.limeek.organizer.presenters.LocationDetailsPresenter
 import ru.limeek.organizer.presenters.LocationDetailsPresenterImpl
-import ru.limeek.organizer.presenters.LocationPresenter
-import ru.limeek.organizer.presenters.LocationPresenterImpl
-import ru.limeek.organizer.views.*
+import ru.limeek.organizer.views.EventDetailsView
+import ru.limeek.organizer.views.LocationDetailsView
+import ru.limeek.organizer.views.View
 
 @Module
 class PresenterModule(val view: View) {
@@ -21,11 +19,11 @@ class PresenterModule(val view: View) {
 //        return CalendarPresenterImpl(view as CalendarFragment)
 //    }
 
-    @Provides
-    @ViewScope
-    fun provideEventsPresenter() : EventsPresenter {
-        return EventsPresenterImpl(view as EventFragmentView)
-    }
+//    @Provides
+//    @ViewScope
+//    fun provideEventsPresenter() : EventsPresenter {
+//        return EventsPresenterImpl(view as EventFragmentView)
+//    }
 
     @Provides
     @ViewScope
@@ -33,11 +31,11 @@ class PresenterModule(val view: View) {
         return EventDetailsPresenterImpl(view as EventDetailsView)
     }
 
-    @Provides
-    @ViewScope
-    fun provideLocationPresenter() : LocationPresenter {
-        return LocationPresenterImpl(view as LocationView)
-    }
+//    @Provides
+//    @ViewScope
+//    fun provideLocationPresenter() : LocationPresenter {
+//        return LocationPresenterImpl(view as LocationView)
+//    }
 
     @Provides
     @ViewScope

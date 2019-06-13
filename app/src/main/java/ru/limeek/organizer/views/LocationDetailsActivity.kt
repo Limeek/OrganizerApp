@@ -5,18 +5,18 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_location_details.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
+import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.di.components.ViewComponent
 import ru.limeek.organizer.di.modules.PresenterModule
 import ru.limeek.organizer.presenters.LocationDetailsPresenter
-import ru.limeek.organizer.data.model.location.Location
 import javax.inject.Inject
 
 class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {

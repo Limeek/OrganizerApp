@@ -2,7 +2,6 @@ package ru.limeek.organizer.presenters
 
 import android.widget.AdapterView
 import com.google.android.gms.location.places.Place
-import io.reactivex.Observable
 import org.joda.time.DateTime
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.model.event.RemindTime
@@ -15,7 +14,7 @@ interface EventDetailsPresenter {
     fun submit()
     fun delete()
     fun onCreate()
-    fun sendToAlarmManager() : Observable<Unit>
+    suspend fun sendToAlarmManager()
     fun notificationSpinnerOnItemSelected() : AdapterView.OnItemSelectedListener
     fun locationSpinnerOnItemsSelected() : AdapterView.OnItemSelectedListener
     fun updateSpinnerItems()

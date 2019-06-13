@@ -1,48 +1,41 @@
 package ru.limeek.organizer.viewmodels
 
-import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.repository.EventRepository
 import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.util.SingleLiveEvent
+import kotlin.coroutines.CoroutineContext
 
-class EventsViewModel(var sharedPrefsRepo: SharedPrefsRepository,
-                      var eventRepository: EventRepository) : ViewModel() {
+class EventsViewModel(private var sharedPrefsRepo: SharedPrefsRepository,
+                      private var eventRepository: EventRepository) : ViewModel(), CoroutineScope {
     val logTag = "EventsPresenter"
 
+    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
+
     var events = MutableLiveData<List<Event>>()
-
     val startDetailsActivity = SingleLiveEvent<Unit>()
-    val notifyAdapter = SingleLiveEvent<Unit>()
     val currentDateString = SingleLiveEvent<String>()
-    val compositeDisposable = CompositeDisposable()
 
-
-    fun onFabClick(): View.OnClickListener {
-        return View.OnClickListener {
-            startDetailsActivity.call()
-        }
+    fun onFabClick() {
+        startDetailsActivity.call()
     }
 
-    fun getCurrentDateString(): String {
-        return sharedPrefsRepo.getDateString("cachedDate")
+    private fun updateEvents() = launch {
+        val dateEvents = eventRepository.getEventsByDate(sharedPrefsRepo.getDateTime("cachedDate"))
+        events.postValue(dateEvents)
     }
 
-    fun updateEvents() {
-        compositeDisposable.add(
-                eventRepository.getEventsByDate(sharedPrefsRepo.getDateTime("cachedDate"))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe { events ->
-                        this.events.value = events
-                        notifyAdapter.call()
-                    }
-        )
+    fun refresh(){
+        currentDateString.value = sharedPrefsRepo.getDateString("cachedDate")
+        updateEvents()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        coroutineContext[Job]?.cancel()
     }
 
 }

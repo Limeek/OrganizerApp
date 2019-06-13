@@ -5,13 +5,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import androidx.core.app.NotificationCompat
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import org.joda.time.DateTime
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.views.EventDetailsActivity
 import ru.limeek.organizer.util.Constants
+import ru.limeek.organizer.views.EventDetailsActivity
 
 class BroadcastReceiverNotification : BroadcastReceiver() {
     val logTag = "BroadcastReceiverNotification"

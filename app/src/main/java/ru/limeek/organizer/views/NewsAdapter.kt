@@ -1,30 +1,36 @@
 package ru.limeek.organizer.views
 
-import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import ru.limeek.organizer.R
-import ru.limeek.organizer.presenters.NewsAdapterPresenter
+import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import ru.limeek.organizer.data.model.news.Article
+import ru.limeek.organizer.databinding.NewsItemBinding
 
-class NewsAdapter(val context: Context) : RecyclerView.Adapter<NewsViewHolder>() {
-    var presenter : NewsAdapterPresenter = NewsAdapterPresenter(this)
+class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsVH>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        return NewsViewHolder(LayoutInflater.from(context).inflate(R.layout.news_item, parent, false))
+    var dataset = listOf<Article>()
+    lateinit var onItemClick: (Article) -> Unit
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsVH {
+        val binding = NewsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return NewsVH(binding)
     }
 
     override fun getItemCount(): Int {
-        return presenter.getCount()
+        return dataset.size
     }
 
-    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.presenter.newsAdapterPresenter = presenter
-        holder.presenter.position = position
-        holder.presenter.bind()
+    override fun onBindViewHolder(holder: NewsVH, position: Int) {
+        holder.binding.article = dataset[position]
+        Picasso.get()
+                .load(holder.binding.article!!.urlToImage)
+                .resize(150,150)
+                .into(holder.binding.ivNews)
+
+        holder.binding.root.setOnClickListener { onItemClick.invoke(holder.binding.article!!) }
     }
 
-    fun onDestroy(){
-        presenter.onDestroy()
-    }
+    class NewsVH(var binding: NewsItemBinding): RecyclerView.ViewHolder(binding.root)
 }

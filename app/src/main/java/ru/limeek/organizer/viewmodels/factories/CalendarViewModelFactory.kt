@@ -6,7 +6,7 @@ import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.viewmodels.CalendarViewModel
 import javax.inject.Inject
 
-class CalendarViewModelFactory @Inject constructor(var sharedPrefRepo: SharedPrefsRepository): ViewModelProvider.Factory {
+class CalendarViewModelFactory @Inject constructor(private var sharedPrefRepo: SharedPrefsRepository): ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(CalendarViewModel::class.java)){

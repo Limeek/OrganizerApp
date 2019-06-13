@@ -4,10 +4,10 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.database.AppDatabase
-import ru.limeek.organizer.di.scopes.AppScope
 import ru.limeek.organizer.data.model.event.EventDao
 import ru.limeek.organizer.data.model.location.LocationDao
+import ru.limeek.organizer.database.AppDatabase
+import ru.limeek.organizer.di.scopes.AppScope
 
 @Module
 class RoomModule(var app: App) {

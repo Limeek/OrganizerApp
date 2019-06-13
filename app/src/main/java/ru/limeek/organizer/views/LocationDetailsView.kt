@@ -2,7 +2,6 @@ package ru.limeek.organizer.views
 
 import android.os.Bundle
 import ru.limeek.organizer.data.model.location.Location
-import ru.limeek.organizer.views.View
 
 interface LocationDetailsView : View {
     fun getLocation() : Location?
