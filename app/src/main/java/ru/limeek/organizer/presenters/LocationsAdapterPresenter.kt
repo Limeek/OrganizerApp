@@ -3,16 +3,18 @@ package ru.limeek.organizer.presenters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.di.modules.RepositoryModule
 import ru.limeek.organizer.views.LocationsAdapter
 import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.data.repository.LocationRepository
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class LocationsAdapterPresenter(var locationsAdapter: LocationsAdapter) {
+class LocationsAdapterPresenter(var locationsAdapter: LocationsAdapter) : CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
     var locations = listOf<Location>()
-    var disposable: Disposable? = null
 
     @Inject
     lateinit var repository: LocationRepository
@@ -22,15 +24,11 @@ class LocationsAdapterPresenter(var locationsAdapter: LocationsAdapter) {
         updateLocations()
     }
 
-    fun updateLocations() {
-        disposable =
-                repository.getUserCreatedLocations()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe { locations ->
-                            this.locations = locations
-                            locationsAdapter.notifyDataSetChanged()
-                        }
+    private fun updateLocations() {
+        launch {
+            this@LocationsAdapterPresenter.locations = repository.getUserCreatedLocations()
+            locationsAdapter.notifyDataSetChanged()
+        }
     }
 
     fun getCount(): Int {
@@ -42,7 +40,6 @@ class LocationsAdapterPresenter(var locationsAdapter: LocationsAdapter) {
     }
 
     fun onDestroy() {
-        disposable!!.dispose()
-        disposable = null
+        coroutineContext[Job]!!.cancel()
     }
 }

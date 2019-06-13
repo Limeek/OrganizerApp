@@ -6,26 +6,26 @@ import io.reactivex.Flowable
 @Dao
 abstract class LocationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insert(location : Location?) : Long
+    abstract suspend fun insert(location : Location?) : Long
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun update(location: Location?)
+    abstract suspend fun update(location: Location?)
 
     @Delete
-    abstract fun delete(location: Location?)
+    abstract suspend fun delete(location: Location?)
 
     @Query("select * from locations where created_by_user = 1")
-    abstract fun getUserCreatedLocations() : Flowable<List<Location>>
+    abstract suspend fun getUserCreatedLocations() : List<Location>
 
     @Query("select * from locations where location_id = :id")
-    abstract fun getLocationById(id: Long) : Flowable<Location>
+    abstract suspend fun getLocationById(id: Long) : Location?
 
-    fun upsert(location: Location) : Long{
-        var id = insert(location)
-        if(id < 0){
+    suspend fun upsert(location: Location): Long{
+        return if(getLocationById(location.id) == null)
+            insert(location)
+        else {
             update(location)
-            id = location.id
+            location.id
         }
-        return id
     }
 }

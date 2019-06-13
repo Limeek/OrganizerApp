@@ -1,6 +1,8 @@
 package ru.limeek.organizer.data.repository
 
 import io.reactivex.Flowable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import ru.limeek.organizer.data.model.EventWithLocation
 import ru.limeek.organizer.data.model.event.Event
@@ -11,132 +13,155 @@ import javax.inject.Inject
 class EventRepository @Inject constructor(var eventDao: EventDao,
                                           var locationDao: LocationDao) {
 
-    private fun getEventsWithLocationAll(): Flowable<List<EventWithLocation>> {
+    private suspend fun getEventsWithLocationAll(): List<EventWithLocation> {
         return eventDao.getEventsWithLocationAll()
     }
 
-    private fun getEventsWithLocationByDate(date: DateTime) : Flowable<List<EventWithLocation>> {
+    private suspend fun getEventsWithLocationByDate(date: DateTime): List<EventWithLocation> {
         return eventDao.getEventsWithLocationByDate(date)
     }
 
-    private fun getEventWithLocationById(id: Long): Flowable<EventWithLocation>{
+    private suspend fun getEventWithLocationById(id: Long): EventWithLocation? {
         return eventDao.getEventWithLocationById(id)
     }
 
-    private fun getEventsByLocationId(locationId: Long): Flowable<List<Event>>{
+    private suspend fun getEventsByLocationId(locationId: Long): List<Event> {
         return eventDao.getEventsByLocationId(locationId)
     }
 
-    fun insert(event: Event): Long{
-        return eventDao.insert(event)
+    suspend fun insert(event: Event): Long {
+        return withContext(Dispatchers.IO) {
+            eventDao.insert(event)
+        }
     }
 
-    fun delete(event: Event){
-        eventDao.delete(event)
+    suspend fun delete(event: Event) {
+        withContext(Dispatchers.IO) {
+            eventDao.delete(event)
+        }
     }
 
-    fun update(event: Event){
-        eventDao.update(event)
+    suspend fun update(event: Event) {
+        withContext(Dispatchers.IO) {
+            eventDao.update(event)
+        }
     }
 
-    fun getEventById(id : Long) : Flowable<Event>{
-        return getEventWithLocationById(id)
-                .map{
-                    val event = it.event
-                    event.location = it.location
-                    return@map event
-                }
+    suspend fun getEventById(id: Long): Event? {
+        return withContext(Dispatchers.IO) {
+            val eventWithLocation = getEventWithLocationById(id)
+            val event = eventWithLocation?.event
+            event?.location = eventWithLocation?.location
+            event
+        }
     }
 
-    fun getEventsByDate(date : DateTime) : Flowable<List<Event>>{
-        return getEventsWithLocationByDate(date)
-                .map{
-                    val eventsList : MutableList<Event> = mutableListOf()
-                    for(e : EventWithLocation in it){
-                        val event = e.event
-                        event.location = e.location
-                        eventsList.add(event)
-                    }
-                    return@map eventsList
-                }
-    }
+    suspend fun getEventsByDate(date: DateTime): List<Event> {
+        return withContext(Dispatchers.IO) {
+            val eventsWithLocation = getEventsWithLocationByDate(date)
+            val eventsList: MutableList<Event> = mutableListOf()
 
-    fun getAllEvents() : Flowable<List<Event>>{
-        return getEventsWithLocationAll()
-                .map{
-                    val eventsList : MutableList<Event> = mutableListOf()
-                    for(e : EventWithLocation in it){
-                        val event = e.event
-                        event.location = e.location
-                        eventsList.add(event)
-                    }
-                    return@map eventsList
-                }
-    }
-
-    fun insertEvent(event: Event) : Long{
-        val locationId : Long
-        val eventId : Long
-        when {
-            event.location != null -> {
-                locationId = locationDao.insert(event.location)
-                event.locationId = locationId
-                eventId = insert(event)
+            eventsWithLocation.forEach {
+                val event = it.event
+                event?.location = it.location
+                eventsList.add(event!!)
             }
 
-            event.locationId != null -> eventId = insert(event)
+           eventsList
+        }
+    }
 
-            else -> {
-                event.locationId = null
-                eventId = insert(event)
+    suspend fun getAllEvents(): List<Event> {
+        return withContext(Dispatchers.IO) {
+            val eventsWithLocation = getEventsWithLocationAll()
+            val eventsList: MutableList<Event> = mutableListOf()
+            eventsWithLocation.forEach{
+                val event = it.event
+                event?.location = it.location
+                eventsList.add(event!!)
+            }
+            eventsList
+        }
+    }
+
+    suspend fun insertEvent(event: Event): Long {
+        return withContext(Dispatchers.IO) {
+            val locationId: Long
+            val eventId: Long
+            when {
+                event.location != null -> {
+                    locationId = locationDao.insert(event.location)
+                    event.locationId = locationId
+                    eventId = insert(event)
+                }
+
+                event.locationId != null -> eventId = insert(event)
+
+                else -> {
+                    event.locationId = null
+                    eventId = insert(event)
+                }
+            }
+            eventId
+        }
+    }
+
+    suspend fun updateEventWithAddedLocation(event: Event) {
+        withContext(Dispatchers.IO){
+            if (event.locationId != null) update(event)
+            else {
+                val locationId = locationDao.insert(event.location)
+                event.locationId = locationId
+                update(event)
             }
         }
-        return eventId
     }
 
-    fun updateEventWithAddedLocation(event: Event){
-        if(event.locationId != null) update(event)
-        else{
-            val locationId = locationDao.insert(event.location)
+    suspend fun updateEventWithCustomToCustomLoc(event: Event) {
+        withContext(Dispatchers.IO) {
+            val locationId = locationDao.upsert(event.location!!)
             event.locationId = locationId
             update(event)
         }
     }
 
-    fun updateEventWithCustomToCustomLoc(event: Event){
-        val locationId = locationDao.upsert(event.location!!)
-        event.locationId = locationId
-        update(event)
+    suspend fun updateEventWithUserToCustomLoc(event: Event) {
+        withContext(Dispatchers.IO) {
+            val locationId = locationDao.insert(event.location!!)
+            event.locationId = locationId
+            update(event)
+        }
     }
 
-    fun updateEventWithUserToCustomLoc(event: Event){
-        val locationId = locationDao.insert(event.location!!)
-        event.locationId = locationId
-        update(event)
-    }
-
-    fun updateEventWithCustomToUserLoc(event: Event){
-        update(event)
-        locationDao.delete(event.location)
-    }
-
-    fun updateEventWithUserLocDelete(event: Event){
-        event.locationId = null
-        update(event)
-    }
-
-    fun updateEventWithCustLocDelete(event: Event){
-        event.locationId = null
-        update(event)
-        locationDao.delete(event.location)
-    }
-
-    fun deleteEvent(event: Event){
-        if(event.location != null && !event.location!!.createdByUser){
-            delete(event)
+    suspend fun updateEventWithCustomToUserLoc(event: Event) {
+        withContext(Dispatchers.IO) {
+            update(event)
             locationDao.delete(event.location)
         }
-        else
-            delete(event)
+    }
+
+    suspend fun updateEventWithUserLocDelete(event: Event) {
+        withContext(Dispatchers.IO) {
+            event.locationId = null
+            update(event)
+        }
+    }
+
+    suspend fun updateEventWithCustLocDelete(event: Event) {
+        withContext(Dispatchers.IO) {
+            event.locationId = null
+            update(event)
+            locationDao.delete(event.location)
+        }
+    }
+
+    suspend fun deleteEvent(event: Event) {
+        withContext(Dispatchers.IO) {
+            if (event.location != null && !event.location!!.createdByUser) {
+                delete(event)
+                locationDao.delete(event.location)
+            } else
+                delete(event)
+        }
     }
 }

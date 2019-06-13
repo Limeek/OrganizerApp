@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import dagger.Module
 import dagger.Provides
+import ru.limeek.organizer.data.repository.EventRepository
 import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.di.scopes.PresenterScope
 import ru.limeek.organizer.viewmodels.CalendarViewModel
@@ -41,7 +42,8 @@ class ViewModelModule() {
 
     @Provides
     @PresenterScope
-    fun provideEvenetsViewModel(sharedPrefsRepo: SharedPrefsRepository): EventsViewModel{
-        return  ViewModelProviders.of(fragment!!, EventsViewModelFactory(sharedPrefsRepo)).get(EventsViewModel::class.java)
+    fun provideEventsViewModel(sharedPrefsRepo: SharedPrefsRepository,
+                               eventsRepo: EventRepository): EventsViewModel{
+        return ViewModelProviders.of(fragment!!, EventsViewModelFactory(sharedPrefsRepo, eventsRepo)).get(EventsViewModel::class.java)
     }
 }

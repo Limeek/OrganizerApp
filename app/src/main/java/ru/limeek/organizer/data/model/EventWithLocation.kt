@@ -5,6 +5,6 @@ import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.model.location.Location
 
 class EventWithLocation {
-    @Embedded lateinit var event : Event
+    @Embedded var event : Event? = null
     @Embedded var location: Location? = null
 }

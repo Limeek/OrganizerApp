@@ -1,44 +1,37 @@
 package ru.limeek.organizer.views
 
-import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import ru.limeek.organizer.R
-import ru.limeek.organizer.presenters.EventsAdapterPresenter
+import ru.limeek.organizer.data.model.event.Event
+import ru.limeek.organizer.databinding.EventsItemBinding
 
-class EventsListAdapter() : RecyclerView.Adapter<EventViewHolder>(){
+class EventsListAdapter : RecyclerView.Adapter<EventsListAdapter.EventVH>(){
+    var dataset: List<Event> = listOf()
+    lateinit var onItemClick: (Event) -> Unit
 
-    var presenter : EventsAdapterPresenter = EventsAdapterPresenter(this)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
-        return EventViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.events_item, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventVH{
+        val binding = EventsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return EventVH(binding)
     }
 
-    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        holder.presenter.eventsAdapterPresenter = presenter
-        holder.presenter.position = position
-        holder.presenter.bind()
+    override fun onBindViewHolder(holder: EventVH, position: Int) {
+        holder.binding.event = dataset[position]
+        holder.binding.locationString = if(dataset[position].location != null) {
+            if(dataset[position].location!!.createdByUser)
+                dataset[position].location!!.name
+            else
+                dataset[position].location!!.address
+        }
+        else {
+            ""
+        }
+        holder.binding.root.setOnClickListener { onItemClick.invoke(holder.binding.event!!) }
     }
 
     override fun getItemCount(): Int {
-        return presenter.getCount()
+        return dataset.size
     }
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
-
-    fun refreshRecycler(){
-        presenter.updateEvents()
-    }
-
-    fun onDestroy(){
-        presenter.onDestroy()
-        context = null
-    }
+    class EventVH(var binding: EventsItemBinding): RecyclerView.ViewHolder(binding.root)
 }

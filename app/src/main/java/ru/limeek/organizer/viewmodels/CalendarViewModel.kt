@@ -11,8 +11,6 @@ import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.util.SingleLiveEvent
 
 class CalendarViewModel(private var repository: SharedPrefsRepository) : ViewModel() {
-    private val logTag = "CalendarViewModel"
-
     val refreshEventFragment = SingleLiveEvent<Unit>()
     val currDate = MutableLiveData<Long>().apply { value = null }
 

@@ -15,7 +15,7 @@ interface EventDetailsPresenter {
     fun submit()
     fun delete()
     fun onCreate()
-    fun sendToAlarmManager() : Observable<Unit>
+    suspend fun sendToAlarmManager()
     fun notificationSpinnerOnItemSelected() : AdapterView.OnItemSelectedListener
     fun locationSpinnerOnItemsSelected() : AdapterView.OnItemSelectedListener
     fun updateSpinnerItems()

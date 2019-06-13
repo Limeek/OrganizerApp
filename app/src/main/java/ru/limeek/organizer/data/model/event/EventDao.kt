@@ -7,28 +7,28 @@ import ru.limeek.organizer.database.DateConverter
 import ru.limeek.organizer.data.model.EventWithLocation
 
 @Dao
-abstract class EventDao{
+interface EventDao{
     @Query("SELECT * FROM EVENTS E LEFT JOIN LOCATIONS L ON E.event_location_id = L.location_id")
-    abstract fun getEventsWithLocationAll() : Flowable<List<EventWithLocation>>
+    suspend fun getEventsWithLocationAll() : List<EventWithLocation>
 
     @Query("SELECT * FROM EVENTS E LEFT JOIN LOCATIONS L ON E.event_location_id = L.location_id WHERE id = :id")
-    abstract fun getEventWithLocationById(id : Long) : Flowable<EventWithLocation>
+    suspend fun getEventWithLocationById(id : Long) : EventWithLocation
 
     @Query("SELECT * FROM EVENTS E LEFT JOIN LOCATIONS L ON E.event_location_id = L.location_id WHERE date_time LIKE :date || '%'")
-    abstract fun getEventsWithLocationByDate(@TypeConverters(DateConverter::class) date : DateTime) : Flowable<List<EventWithLocation>>
+    suspend fun getEventsWithLocationByDate(@TypeConverters(DateConverter::class) date : DateTime) : List<EventWithLocation>
 
     @Query("SELECT * FROM EVENTS WHERE event_location_id = :locationId")
-    abstract fun getEventsByLocationId(locationId: Long) : Flowable<List<Event>>
+    suspend fun getEventsByLocationId(locationId: Long) : List<Event>
 
     @Insert
-    abstract fun insert(event: Event) : Long
+    suspend fun insert(event: Event) : Long
 
     @Delete
-    abstract fun delete(event: Event?)
+    suspend fun delete(event: Event?)
 
     @Update
-    abstract fun update(event: Event?)
+    suspend fun update(event: Event?)
 
     @Update
-    abstract fun update(events : List<Event>)
+    suspend fun update(events : List<Event>)
 }

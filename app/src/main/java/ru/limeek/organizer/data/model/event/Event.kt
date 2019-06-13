@@ -13,8 +13,7 @@ import ru.limeek.organizer.util.Constants
         foreignKeys = [(ForeignKey(
                 entity = Location::class,
                 parentColumns = [("location_id")],
-                childColumns = [("event_location_id")],
-                onDelete = ForeignKey.NO_ACTION
+                childColumns = [("event_location_id")]
         ))],
         indices = [(Index("event_location_id"))]
 )
