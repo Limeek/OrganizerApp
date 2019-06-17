@@ -30,12 +30,11 @@ class WeatherFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         injectComponent()
         binding.viewModel = viewModel
-        viewModel.onCreate()
         observeLiveData()
     }
 
     private fun observeLiveData(){
-        viewModel.iconString.observe(this, Observer{
+        viewModel.iconString.observe(viewLifecycleOwner, Observer{
             setWeatherIcon(it)
         })
     }

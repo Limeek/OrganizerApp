@@ -15,7 +15,7 @@ interface EventDetailsView : View {
     fun showErrorNotificationAndHideLayout()
     fun setupPlaceSpinnerAdapter(items: List<LocationSpinnerItem>)
     fun startLocationDetailsActivity()
-    fun startPlacePicker()
+//    fun startPlacePicker()
     fun startCalendarActivity()
 
     fun updateDate(date: String)

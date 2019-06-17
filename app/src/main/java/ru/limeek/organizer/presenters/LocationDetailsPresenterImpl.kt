@@ -1,7 +1,6 @@
 package ru.limeek.organizer.presenters
 
 import android.os.Bundle
-import com.google.android.gms.location.places.Place
 import kotlinx.coroutines.*
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.data.model.location.Location
@@ -47,12 +46,12 @@ class LocationDetailsPresenterImpl(var locationDetailsView: LocationDetailsView?
         }
     }
 
-    override fun createLocation(place: Place) {
-        location = if (location == null)
-            Location(place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString(), true)
-        else
-            Location(location!!.id, place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString(), true)
-    }
+//    override fun createLocation(place: Place) {
+//        location = if (location == null)
+//            Location(place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString(), true)
+//        else
+//            Location(location!!.id, place.latLng.latitude, place.latLng.longitude, place.name.toString(), place.address.toString(), true)
+//    }
 
     private fun updateUI() {
         locationDetailsView!!.updateName(location!!.name)

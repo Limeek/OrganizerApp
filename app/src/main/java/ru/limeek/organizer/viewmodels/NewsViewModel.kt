@@ -14,13 +14,13 @@ class NewsViewModel(var newsRepo: NewsRepository): ViewModel(), CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
     var news = MutableLiveData<News>()
 
+    init {
+        getNews()
+    }
+
     private fun getNews() {
         launch {
             news.postValue(newsRepo.getRecentNews())
         }
-    }
-
-    fun onCreate(){
-        getNews()
     }
 }

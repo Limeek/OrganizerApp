@@ -23,7 +23,7 @@ class WeatherViewModel @Inject constructor(private var weatherRepo: WeatherRepos
 
     lateinit var location: Location
 
-    fun onCreate() {
+    init {
         if (App.instance.checkLocationPermission()) {
             val locationManager = App.instance.locationManager
             location = locationManager.getLastKnownLocation(locationManager.getBestProvider(Criteria(), true))

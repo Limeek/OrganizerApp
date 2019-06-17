@@ -5,11 +5,13 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import io.reactivex.subjects.PublishSubject
+import ru.limeek.organizer.util.SingleLiveEvent
 
 class TimePickerDialogFragment : DialogFragment() {
     var hour: Int = 0
     var minute: Int = 0
-    var time: PublishSubject<String> = PublishSubject.create()
+
+    var time = SingleLiveEvent<String>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return TimePickerDialog(activity, onTimeSetListener, hour, minute, true)
@@ -24,6 +26,6 @@ class TimePickerDialogFragment : DialogFragment() {
     var onTimeSetListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
         val h = if (hourOfDay / 10 == 0) "0$hourOfDay" else hourOfDay.toString()
         val m = if (minute / 10 == 0) "0$minute" else minute.toString()
-        time.onNext("$h:$m")
+        time.value = "$h:$m"
     }
 }

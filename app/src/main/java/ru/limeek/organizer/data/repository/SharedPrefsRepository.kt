@@ -16,7 +16,7 @@ class SharedPrefsRepository @Inject constructor(private var sharedPreferences: S
     }
 
     fun getDataString(key: String) : String{
-        return sharedPreferences.getString(key, "")
+        return sharedPreferences.getString(key, "")!!
     }
 
     fun getDateString(key : String) : String{

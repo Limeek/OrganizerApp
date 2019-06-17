@@ -77,7 +77,6 @@ class LocationActivity : AppCompatActivity() {
         }
 
         navView.setNavigationItemSelectedListener(navigationItemClick)
-        viewModel.onCreate()
         observeLiveData()
     }
 

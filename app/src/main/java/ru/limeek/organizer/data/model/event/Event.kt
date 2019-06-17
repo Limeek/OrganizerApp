@@ -96,9 +96,9 @@ data class Event(
             val eventRemind = parcel.readParcelable<RemindTime>(RemindTime::class.java.classLoader)
             val location = parcel.readParcelable<Location>(Location::class.java.classLoader)
             return if (location != null)
-                Event(id, eventDateTime, eventSummary, eventRemind, location, location.id)
+                Event(id, eventDateTime, eventSummary!!, eventRemind!!, location, location.id)
             else
-                Event(id, eventDateTime, eventSummary, eventRemind)
+                Event(id, eventDateTime, eventSummary!!, eventRemind!!)
         }
 
         override fun newArray(size: Int): Array<Event?> {

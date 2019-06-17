@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.view.View
 import android.widget.AdapterView
-import com.google.android.gms.location.places.Place
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -167,12 +166,12 @@ class EventDetailsPresenterImpl(var eventDetailsView: EventDetailsView) : EventD
 
     }
 
-    override fun createLocation(place: Place) {
-        createdCustomLocation = if (event?.location != null && !event?.location!!.createdByUser) {
-            Location(event!!.location!!.id, place.latLng.longitude, place.latLng.latitude, place.name.toString(), place.address.toString(), false)
-        } else
-            Location(place.latLng.longitude, place.latLng.latitude, place.name.toString(), place.address.toString(), false)
-    }
+//    override fun createLocation(place: Place) {
+//        createdCustomLocation = if (event?.location != null && !event?.location!!.createdByUser) {
+//            Location(event!!.location!!.id, place.latLng.longitude, place.latLng.latitude, place.name.toString(), place.address.toString(), false)
+//        } else
+//            Location(place.latLng.longitude, place.latLng.latitude, place.name.toString(), place.address.toString(), false)
+//    }
 
     override fun getMapUri(): String {
         return "geo:${event!!.location!!.latitude},${event!!.location!!.longitude}?q=" +
@@ -217,7 +216,7 @@ class EventDetailsPresenterImpl(var eventDetailsView: EventDetailsView) : EventD
                             ((event?.location == null || event?.location!!.createdByUser) && eventDetailsView.getLocation() == "") -> {
                         eventDetailsView.updateLocationCreationVisibility(true)
                         chosenLocationId = null
-                        eventDetailsView.startPlacePicker()
+//                        eventDetailsView.startPlacePicker()
                     }
                     //If Custom location is already selected
                     (parent.getItemAtPosition(position) as LocationSpinnerItem).name == App.instance.getString(R.string.custom_location) -> {

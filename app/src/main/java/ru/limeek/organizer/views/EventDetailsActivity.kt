@@ -14,9 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.places.ui.PlacePicker
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_event_details.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -46,8 +44,6 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
 
     @Inject
     lateinit var presenter : EventDetailsPresenter
-
-    private var compositeDisposable = CompositeDisposable()
 
     @Override
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -158,7 +154,7 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
             R.id.switchLocation -> placeSwitchClick()
             R.id.etLocation ->
                 if (getUneditable()!=null) startMap(presenter.getMapUri())
-                else startPlacePicker()
+//                else startPlacePicker()
         }
     }
 
@@ -191,32 +187,32 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
         linearLayoutNotification.visibility = View.GONE
     }
 
-    override fun startPlacePicker() {
-        if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                baseContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_CODE_ASK_PERMISSIONS)
-
-        if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_DENIED &&
-                baseContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_DENIED) {
-            val ppIntent = PlacePicker.IntentBuilder().build(this)
-            try {
-                startActivityForResult(ppIntent, PLACE_PICKER_REQUEST)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+//    override fun startPlacePicker() {
+//        if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                baseContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_CODE_ASK_PERMISSIONS)
+//
+//        if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_DENIED &&
+//                baseContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_DENIED) {
+//            val ppIntent = PlacePicker.IntentBuilder().build(this)
+//            try {
+//                startActivityForResult(ppIntent, PLACE_PICKER_REQUEST)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(resultCode == Activity.RESULT_OK){
             when (requestCode){
-                PLACE_PICKER_REQUEST -> {
-                    val place = PlacePicker.getPlace(this,data)
-                    presenter.createLocation(place)
-                    etLocation.setText(place.address)
-                }
+//                PLACE_PICKER_REQUEST -> {
+//                    val place = PlacePicker.getPlace(this,data)
+//                    presenter.createLocation(place)
+//                    etLocation.setText(place.address)
+//                }
                 LOCATION_DETAILS_REQUEST ->{
                     presenter.onLocationDetailsResult(data!!.getBundleExtra("location").getLong("locationId"))
                 }
@@ -262,16 +258,12 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
         bundle.putInt("year", dateTime.year)
         datePickerDialogFragment.arguments = bundle
 
-        compositeDisposable.add(
-                datePickerDialogFragment.date
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            updateDate(it)
-                            if(getTime().isNotBlank())
-                                presenter.updateSpinnerItems()
-                        }
-        )
+        datePickerDialogFragment.date.observe(this, Observer{
+            updateDate(it)
+            if(getTime().isNotBlank())
+                presenter.updateSpinnerItems()
+            datePickerDialogFragment.date.removeObservers(this)
+        })
 
         datePickerDialogFragment.show(supportFragmentManager, "DatePicker")
     }
@@ -283,15 +275,11 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
         bundle.putInt("minute", DateTime.now().minuteOfHour)
         timePickerDialogFragment.arguments = bundle
 
-        compositeDisposable.add(
-                timePickerDialogFragment.time
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            updateTime(it)
-                            presenter.updateSpinnerItems()
-                        }
-        )
+        timePickerDialogFragment.time.observe(timePickerDialogFragment.viewLifecycleOwner, Observer {
+            updateTime(it)
+            presenter.updateSpinnerItems()
+            timePickerDialogFragment.time.removeObservers(this)
+        })
 
         timePickerDialogFragment.show(supportFragmentManager, "TimePicker")
     }
@@ -382,7 +370,6 @@ class EventDetailsActivity : EventDetailsView,AppCompatActivity(), View.OnClickL
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable.dispose()
         component = null
     }
 

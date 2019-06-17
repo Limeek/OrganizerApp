@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.MutableLiveData
 import io.reactivex.subjects.PublishSubject
+import ru.limeek.organizer.util.SingleLiveEvent
 
 class DatePickerDialogFragment : DialogFragment() {
     val logTag = "DatePickerDialog"
@@ -14,10 +16,10 @@ class DatePickerDialogFragment : DialogFragment() {
     var month: Int = 0
     var day: Int = 0
 
-    var date: PublishSubject<String> = PublishSubject.create()
+    var date = SingleLiveEvent<String>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return DatePickerDialog(activity, dateSetListener, year, month, day)
+        return DatePickerDialog(activity!!, dateSetListener, year, month, day)
     }
 
     var dateSetListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
@@ -27,7 +29,7 @@ class DatePickerDialogFragment : DialogFragment() {
             dayOfMonth / 10 == 0 -> "0$dayOfMonth.${month + 1}.$year"
             else -> "$dayOfMonth.${month + 1}.$year"
         }
-        date.onNext(dateText)
+        date.value = dateText
         Log.wtf(logTag, "$dayOfMonth.0${month + 1}.$year")
     }
 

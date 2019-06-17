@@ -33,7 +33,6 @@ class NewsFragment : Fragment() {
         injectComponent()
         binding.viewModel = viewModel
         binding.adapter = adapter
-        viewModel.onCreate()
     }
 
     private fun openNewsWebView(article: Article){

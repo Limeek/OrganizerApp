@@ -45,7 +45,7 @@ data class Location(
             val name = source.readString()
             val address = source.readString()
             val createdByUser  = source.readInt() == 1
-            return Location(id, longitude, latitude, name, address, createdByUser)
+            return Location(id, longitude, latitude, name!!, address!!, createdByUser)
         }
 
         override fun newArray(size: Int): Array<Location?> {

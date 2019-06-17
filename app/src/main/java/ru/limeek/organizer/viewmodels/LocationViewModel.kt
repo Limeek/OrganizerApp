@@ -16,6 +16,10 @@ class LocationViewModel @Inject constructor(private var locationRepo: LocationRe
     val locations = MutableLiveData<List<Location>>()
     val startDetailsActivity = SingleLiveEvent<Unit>()
 
+    init {
+        getLocations()
+    }
+
     fun onFabClick(){
         startDetailsActivity.call()
     }
@@ -24,10 +28,6 @@ class LocationViewModel @Inject constructor(private var locationRepo: LocationRe
         launch {
             locations.postValue(locationRepo.getUserCreatedLocations())
         }
-    }
-
-    fun onCreate(){
-        getLocations()
     }
 
     override fun onCleared() {

@@ -33,7 +33,7 @@ class CalendarFragment: Fragment() {
     }
 
     private fun observeLiveData(){
-        viewModel.refreshEventFragment.observe(this, Observer{
+        viewModel.refreshEventFragment.observe(viewLifecycleOwner, Observer{
             (activity as? MainActivity)?.refreshEventsFragment()
         })
     }
