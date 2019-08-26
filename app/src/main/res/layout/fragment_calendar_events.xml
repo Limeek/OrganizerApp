@@ -1,66 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <data>
-        <variable
-            name="viewModel"
-            type="ru.limeek.organizer.viewmodels.EventsViewModel" />
-        <variable
-            name="recAdapter"
-            type="ru.limeek.organizer.views.EventsListAdapter"/>
-    </data>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvCurrentDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimaryDark"
-                android:fontFamily="sans-serif"
-                android:text="@{viewModel.currentDateString}"
-                android:textAlignment="center"
-                android:textColor="@android:color/background_light" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recViewEvents"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipChildren="false"
-                android:scrollbars="vertical"
-                android:visibility="visible"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                verticalDecoration="@{true}"
-                data = "@{viewModel.events}"
-                adapter= "@{recAdapter}"
-                tools:listitem="@layout/events_item">
-
-            </androidx.recyclerview.widget.RecyclerView>
-        </LinearLayout>
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingButton"
+        <TextView
+            android:id="@+id/tvCurrentDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:layout_marginBottom="@dimen/fab_margin"
-            android:clickable="true"
-            android:focusable="true"
-            app:backgroundTint="?attr/colorPrimaryDark"
-            app:layout_anchor="@+id/recViewEvents"
-            app:layout_anchorGravity="right|bottom"
-            android:onClick="@{() -> viewModel.onFabClick()}"
-            app:srcCompat="@drawable/ic_add_white_24dp"
-            />
+            android:background="?attr/colorPrimaryDark"
+            android:fontFamily="sans-serif"
+            android:textAlignment="center"
+            android:textColor="@android:color/background_light" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recViewEvents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:scrollbars="vertical"
+            android:visibility="visible"
+            tools:listitem="@layout/events_item">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="?attr/colorPrimaryDark"
+        app:layout_anchor="@+id/recViewEvents"
+        app:layout_anchorGravity="right|bottom"
+        app:srcCompat="@drawable/ic_add_white_24dp" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

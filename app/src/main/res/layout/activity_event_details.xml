@@ -1,249 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".views.EventDetailsActivity">
 
-<layout>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="ru.limeek.organizer.viewmodels.EventDetailsViewModel" />
-    </data>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        tools:context=".views.EventDetailsActivity">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <EditText
+            android:id="@+id/etDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="7"
+            android:background="@drawable/round_rec_bg_edittext"
+            android:ems="10"
+            android:focusable="false"
+            android:hint="@string/event_date"
+            android:inputType="none"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="7"
+            android:background="@drawable/round_rec_bg_edittext"
+            android:ems="10"
+            android:focusable="false"
+            android:hint="@string/event_time"
+            android:inputType="none"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etDate" />
+
+        <EditText
+            android:id="@+id/etSummary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="7"
+            android:background="@drawable/round_rec_bg_edittext"
+            android:ems="10"
+            android:hint="@string/event_summary"
+            android:inputType="textMultiLine"
+            android:maxLength="50"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etTime" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etSummary">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+            <TextView
+                android:id="@+id/tvNotification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="@string/notification"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchNotification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:checked="false"
+                android:switchTextAppearance="@android:style/TextAppearance.Material.Small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutNotification"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
 
-            <EditText
-                android:id="@+id/etDate"
+            <TextView
+                android:id="@+id/remind"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="7"
-                android:background="@drawable/round_rec_bg_edittext"
-                android:ems="10"
-                android:focusable="false"
-                android:hint="@string/event_date"
-                android:inputType="none"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_weight="3"
+                android:text="@string/remind"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/etTime"
+            <Spinner
+                android:id="@+id/spinnerRemind"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="7"
                 android:background="@drawable/round_rec_bg_edittext"
-                android:ems="10"
-                android:focusable="false"
-                android:hint="@string/event_time"
-                android:inputType="none"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etDate" />
+                android:focusable="auto" />
+        </LinearLayout>
 
-            <EditText
-                android:id="@+id/etSummary"
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutNotification">
+
+            <TextView
+                android:id="@+id/tvPlace"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="7"
-                android:background="@drawable/round_rec_bg_edittext"
-                android:ems="10"
-                android:hint="@string/event_summary"
-                android:inputType="textMultiLine"
-                android:maxLength="50"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etTime" />
+                android:layout_weight="3"
+                android:text="@string/place"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
-            <LinearLayout
-                android:id="@+id/linearLayout5"
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:checked="false"
+                android:switchTextAppearance="@android:style/TextAppearance.Material.Small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutLocationChoose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+            <Spinner
+                android:id="@+id/spinnerLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etSummary">
-
-                <TextView
-                    android:id="@+id/tvNotification"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="@string/notification"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchNotification"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="7"
-                    android:checked="false"
-                    android:switchTextAppearance="@android:style/TextAppearance.Material.Small" />
-            </LinearLayout>
+                android:layout_weight="3"
+                android:background="@drawable/round_rec_bg_edittext" />
 
             <LinearLayout
-                android:id="@+id/linearLayoutNotification"
+                android:id="@+id/linearLayoutLocationCreation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.021"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayoutLocationChoose"
+                app:layout_constraintVertical_bias="0.056">
 
-                <TextView
-                    android:id="@+id/remind"
+                <ImageView
+                    android:id="@+id/ivMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_room_black_24dp" />
+
+                <EditText
+                    android:id="@+id/etLocation"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="@string/remind"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
-
-                <Spinner
-                    android:id="@+id/spinnerRemind"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="8"
                     android:background="@drawable/round_rec_bg_edittext"
-                    android:focusable="auto" />
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="@string/place"
+                    android:inputType="textMultiLine"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:textSize="24sp" />
             </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/linearLayout6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayoutNotification">
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/tvPlace"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="@string/place"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchLocation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="7"
-                    android:checked="false"
-                    android:switchTextAppearance="@android:style/TextAppearance.Material.Small" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearLayoutLocationChoose"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
-
-                <Spinner
-                    android:id="@+id/spinnerLocation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:background="@drawable/round_rec_bg_edittext" />
-
-                <LinearLayout
-                    android:id="@+id/linearLayoutLocationCreation"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.021"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayoutLocationChoose"
-                    app:layout_constraintVertical_bias="0.056">
-
-                    <ImageView
-                        android:id="@+id/ivMap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:srcCompat="@drawable/ic_room_black_24dp" />
-
-                    <EditText
-                        android:id="@+id/etLocation"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="8"
-                        android:background="@drawable/round_rec_bg_edittext"
-                        android:ems="10"
-                        android:focusable="false"
-                        android:hint="@string/place"
-                        android:inputType="textMultiLine"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:textSize="24sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </RelativeLayout>
-</layout>
+</RelativeLayout>

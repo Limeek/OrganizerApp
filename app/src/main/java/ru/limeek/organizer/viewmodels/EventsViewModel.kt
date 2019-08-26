@@ -6,6 +6,7 @@ import kotlinx.coroutines.*
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.repository.EventRepository
 import ru.limeek.organizer.data.repository.SharedPrefsRepository
+import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.util.SingleLiveEvent
 import kotlin.coroutines.CoroutineContext
 
@@ -24,12 +25,12 @@ class EventsViewModel(private var sharedPrefsRepo: SharedPrefsRepository,
     }
 
     private fun updateEvents() = launch {
-        val dateEvents = eventRepository.getEventsByDate(sharedPrefsRepo.getDateTime("cachedDate"))
+        val dateEvents = eventRepository.getEventsByDate(sharedPrefsRepo.getDateTime(Constants.CACHED_DATE))
         events.postValue(dateEvents)
     }
 
     fun refresh(){
-        currentDateString.value = sharedPrefsRepo.getDateString("cachedDate")
+        currentDateString.value = sharedPrefsRepo.getDateString(Constants.CACHED_DATE)
         updateEvents()
     }
 

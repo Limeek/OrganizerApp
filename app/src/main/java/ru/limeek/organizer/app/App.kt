@@ -12,6 +12,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.R
 import ru.limeek.organizer.di.components.AppComponent
 import ru.limeek.organizer.di.components.DaggerAppComponent
@@ -52,7 +53,7 @@ class App : Application() {
         component.inject(this)
 
         instance = this
-        sharedPreferences.edit().putString("cachedDate", DateTime.now().toString()).apply()
+        sharedPreferences.edit().putString(Constants.CACHED_DATE, DateTime.now().toString(Constants.FORMAT_DD_MM_YY_HH_MM)).apply()
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&

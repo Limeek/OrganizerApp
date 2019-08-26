@@ -6,35 +6,42 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.calendar_fragment.*
+import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.databinding.CalendarFragmentBinding
 import ru.limeek.organizer.di.modules.ViewModelModule
 import ru.limeek.organizer.viewmodels.CalendarViewModel
 import javax.inject.Inject
 
 class CalendarFragment: Fragment() {
-    private lateinit var binding: CalendarFragmentBinding
 
     @Inject
     lateinit var viewModel: CalendarViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = CalendarFragmentBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
-        return binding.root
+        return inflater.inflate(R.layout.calendar_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         App.instance.component.newViewViewModelComponent(ViewModelModule(this)).inject(this)
         viewModel.onCreate()
-        binding.viewModel = viewModel
         observeLiveData()
+    }
+
+    private fun initView(){
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            viewModel.onDateChange(year, month, dayOfMonth)
+        }
     }
 
     private fun observeLiveData(){
         viewModel.refreshEventFragment.observe(viewLifecycleOwner, Observer{
             (activity as? MainActivity)?.refreshEventsFragment()
+        })
+        viewModel.currDate.observe(viewLifecycleOwner, Observer {
+            calendarView.date = it
         })
     }
 }

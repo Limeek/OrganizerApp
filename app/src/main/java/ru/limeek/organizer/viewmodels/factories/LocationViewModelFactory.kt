@@ -6,7 +6,7 @@ import ru.limeek.organizer.data.repository.LocationRepository
 import ru.limeek.organizer.viewmodels.LocationViewModel
 import javax.inject.Inject
 
-class LocationViewModelFactory @Inject constructor(var locationRepository: LocationRepository): ViewModelProvider.Factory {
+class LocationViewModelFactory @Inject constructor(private var locationRepository: LocationRepository): ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(LocationViewModel::class.java)){

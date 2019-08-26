@@ -9,8 +9,8 @@ import ru.limeek.organizer.data.model.event.EventDao
 import ru.limeek.organizer.data.model.location.LocationDao
 import javax.inject.Inject
 
-class EventRepository @Inject constructor(var eventDao: EventDao,
-                                          var locationDao: LocationDao) {
+class EventRepository @Inject constructor(private var eventDao: EventDao,
+                                          private var locationDao: LocationDao) {
 
     private suspend fun getEventsWithLocationAll(): List<EventWithLocation> {
         return eventDao.getEventsWithLocationAll()

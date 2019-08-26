@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-<data>
-    <variable
-        name="viewModel"
-        type="ru.limeek.organizer.viewmodels.PlacePickerViewModel" />
-</data>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <FrameLayout
+        android:id="@+id/mapFragContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
+    </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/mapFragContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_anchor="@+id/mapFragContainer"
+        app:layout_anchorGravity="end|bottom"
+        app:srcCompat="@drawable/ic_check_white_24dp" />
 
-        </FrameLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:backgroundTint="@color/colorPrimary"
-            app:layout_anchor="@+id/mapFragContainer"
-            app:layout_anchorGravity="end|bottom"
-            app:srcCompat="@drawable/ic_check_white_24dp" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

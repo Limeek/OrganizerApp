@@ -10,7 +10,6 @@ import ru.limeek.organizer.views.LocationDetailsActivity
 @Subcomponent(modules = [PresenterModule::class])
 @ViewScope
 interface ViewComponent {
-    fun inject(eventDetailsActivity: EventDetailsActivity)
     fun inject(locationActivity: LocationActivity)
     fun inject(locationDetailsActivity: LocationDetailsActivity)
 }

@@ -9,27 +9,25 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.thbs.skycons.library.*
+import kotlinx.android.synthetic.main.fragment_weather.*
+import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.databinding.FragmentWeatherBinding
 import ru.limeek.organizer.di.modules.ViewModelModule
 import ru.limeek.organizer.viewmodels.WeatherViewModel
 import javax.inject.Inject
 
 class WeatherFragment : Fragment() {
-    private lateinit var binding: FragmentWeatherBinding
     @Inject
     lateinit var viewModel: WeatherViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentWeatherBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
-        return binding.root
+        val view = inflater.inflate(R.layout.fragment_weather, container, false)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         injectComponent()
-        binding.viewModel = viewModel
         observeLiveData()
     }
 
@@ -59,10 +57,10 @@ class WeatherFragment : Fragment() {
 
     private fun addIconToLayout(icon: SkyconView){
         val linLayoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        binding.linLayoutIcon.layoutParams = linLayoutParams
+        linLayoutIcon.layoutParams = linLayoutParams
         linLayoutParams.height = 400
         linLayoutParams.width = 400
-        binding.linLayoutIcon.addView(icon)
+        linLayoutIcon.addView(icon)
     }
 
     override fun onDestroy() {

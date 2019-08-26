@@ -14,11 +14,11 @@ class CalendarViewModel(private var repository: SharedPrefsRepository) : ViewMod
 
     fun onDateChange(year: Int, month: Int, day: Int){
         val cachedDate = DateTime.parse("$year-${month + 1}-$day", DateTimeFormat.forPattern(Constants.FORMAT_YY_MM_dd))
-        repository.putDateTime("cachedDate", cachedDate)
+        repository.putDateTime(Constants.CACHED_DATE, cachedDate)
         refreshEventFragment.call()
     }
 
     fun onCreate() {
-        currDate.value = repository.getDateTime("cachedDate").millis
+        currDate.value = repository.getDateTime(Constants.CACHED_DATE).millis
     }
 }

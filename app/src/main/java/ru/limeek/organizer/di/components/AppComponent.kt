@@ -11,7 +11,6 @@ interface AppComponent {
     fun newViewComponent(presenterModule: PresenterModule): ViewComponent
     fun newViewViewModelComponent(viewModelModule: ViewModelModule): ViewViewModelComponent
     fun newPresenterComponent(repositoryModule: RepositoryModule): PresenterComponent
-    fun newViewModelComponent(repositoryModule: RepositoryModule): ViewModelComponent
 
     fun inject(app : App)
 }

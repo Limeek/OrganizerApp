@@ -7,8 +7,8 @@ import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.data.model.location.LocationDao
 import javax.inject.Inject
 
-class LocationRepository @Inject constructor(var locationDao: LocationDao,
-                                             var eventDao: EventDao) {
+class LocationRepository @Inject constructor(private var locationDao: LocationDao,
+                                             private var eventDao: EventDao) {
     suspend fun insert(location: Location): Long{
         return withContext(Dispatchers.IO) {
             locationDao.insert(location)

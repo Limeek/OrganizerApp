@@ -12,7 +12,6 @@ class NewsWebActivity : AppCompatActivity(){
     lateinit var webView: WebView
     lateinit var uri : String
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_news_web)

@@ -24,7 +24,6 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
     @Inject
     lateinit var presenter : LocationDetailsPresenter
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location_details)
@@ -72,7 +71,7 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
 
     override fun getLocation() : Location? {
         if(intent.hasExtra("location"))
-            return intent.extras.getParcelable("location")
+            return intent.extras?.getParcelable("location")
         return null
     }
 
@@ -100,13 +99,13 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK)
-            when(requestCode){
+//            when(requestCode){
 //                PLACE_PICKER_REQUEST -> {
 //                    val place = PlacePicker.getPlace(this,data)
 //                    presenter.createLocation(place)
 //                    etAddress.setText(place.address)
 //                }
-            }
+//            }
         super.onActivityResult(requestCode, resultCode, data)
     }
 

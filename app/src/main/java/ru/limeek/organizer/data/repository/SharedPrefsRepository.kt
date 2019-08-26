@@ -20,11 +20,11 @@ class SharedPrefsRepository @Inject constructor(private var sharedPreferences: S
     }
 
     fun getDateString(key : String) : String{
-        val dateTime = DateTime.parse(sharedPreferences.getString(key,""))
+        val dateTime = DateTime.parse(sharedPreferences.getString(key, ""), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM))
         return dateTime.toString(DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY))
     }
 
     fun getDateTime(key : String) : DateTime {
-        return DateTime.parse(sharedPreferences.getString(key,""))
+        return DateTime.parse(sharedPreferences.getString(key, ""), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM))
     }
 }

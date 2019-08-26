@@ -30,6 +30,8 @@ data class Event(
     @Ignore
     var location : Location? = null
 
+    @Ignore
+    constructor(): this(DateTime(), "", RemindTime.NOREMIND)
 
     @Ignore
     constructor(id : Long, eventDateTime: DateTime, eventSummary: String, eventRemind: RemindTime) :

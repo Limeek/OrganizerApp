@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProviders
 import dagger.Module
 import dagger.Provides
 import ru.limeek.organizer.data.repository.*
-import ru.limeek.organizer.di.scopes.PresenterScope
+import ru.limeek.organizer.di.scopes.ViewModelScope
 import ru.limeek.organizer.viewmodels.*
 import ru.limeek.organizer.viewmodels.factories.*
 
@@ -25,26 +25,26 @@ class ViewModelModule() {
     }
 
     @Provides
-    @PresenterScope
+    @ViewModelScope
     fun provideMainViewModel(): MainViewModel{
         return ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
     }
 
     @Provides
-    @PresenterScope
+    @ViewModelScope
     fun provideCalendarViewModel(sharedPrefsRepo: SharedPrefsRepository): CalendarViewModel {
         return ViewModelProviders.of(fragment!!, CalendarViewModelFactory(sharedPrefsRepo)).get(CalendarViewModel::class.java)
     }
 
     @Provides
-    @PresenterScope
+    @ViewModelScope
     fun provideEventsViewModel(sharedPrefsRepo: SharedPrefsRepository,
                                eventsRepo: EventRepository): EventsViewModel{
         return ViewModelProviders.of(fragment!!, EventsViewModelFactory(sharedPrefsRepo, eventsRepo)).get(EventsViewModel::class.java)
     }
 
     @Provides
-    @PresenterScope
+    @ViewModelScope
     fun provideEventDetailsViewModel(sharedPrefsRepo: SharedPrefsRepository,
                                      eventsRepo: EventRepository,
                                      locationRepository: LocationRepository): EventDetailsViewModel {
@@ -53,13 +53,13 @@ class ViewModelModule() {
     }
 
     @Provides
-    @PresenterScope
+    @ViewModelScope
     fun provideWeatherViewModel(weatherRepo: WeatherRepository): WeatherViewModel{
         return ViewModelProviders.of(fragment!!, WeatherViewModelFactory(weatherRepo)).get(WeatherViewModel::class.java)
     }
 
     @Provides
-    @PresenterScope
+    @ViewModelScope
     fun provideNewsViewModel(newsRepo: NewsRepository): NewsViewModel{
         return ViewModelProviders.of(fragment!!, NewsViewModelFactory(newsRepo)).get(NewsViewModel::class.java)
     }

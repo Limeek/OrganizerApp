@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.subjects.PublishSubject
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.util.SingleLiveEvent
+import timber.log.Timber
+import java.time.LocalDate
 
 class DatePickerDialogFragment : DialogFragment() {
-    val logTag = "DatePickerDialog"
     var year: Int = 0
     var month: Int = 0
     var day: Int = 0
@@ -22,7 +24,7 @@ class DatePickerDialogFragment : DialogFragment() {
         return DatePickerDialog(activity!!, dateSetListener, year, month, day)
     }
 
-    var dateSetListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+    private var dateSetListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
         val dateText = when {
             month / 10 == 0 && dayOfMonth / 10 == 0 -> "0$dayOfMonth.0${month + 1}.$year"
             month / 10 == 0 -> "$dayOfMonth.0${month + 1}.$year"
@@ -30,13 +32,18 @@ class DatePickerDialogFragment : DialogFragment() {
             else -> "$dayOfMonth.${month + 1}.$year"
         }
         date.value = dateText
-        Log.wtf(logTag, "$dayOfMonth.0${month + 1}.$year")
+        Timber.e("$dayOfMonth.0${month + 1}.$year")
     }
 
     override fun setArguments(args: Bundle?) {
         super.setArguments(args)
-        day = args!!.getInt("day")
-        month = args.getInt("month")
-        year = args.getInt("year")
+        val date = DateTime.parse(args?.getString(Constants.DATE), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY))
+        day = date.dayOfMonth
+        month = date.monthOfYear - 1
+        year = date.year
+    }
+
+    companion object{
+        val TAG = "DATE_PICKER_FRAG"
     }
 }

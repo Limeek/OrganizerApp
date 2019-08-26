@@ -49,7 +49,7 @@ class EventDetailsPresenterImpl(var eventDetailsView: EventDetailsView) : EventD
     override fun submit() {
         launch {
             if (eventDetailsView.getTime() != "") {
-                sharedPrefsRepository.putDateTime("cachedDate", DateTime.parse(eventDetailsView.getDate(), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY)))
+                sharedPrefsRepository.putDateTime(Constants.CACHED_DATE, DateTime.parse(eventDetailsView.getDate(), DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY)))
                 if (event != null) {
                     if (!eventDetailsView.isNotificationChecked())
                         remindTime = RemindTime.NOREMIND
@@ -83,7 +83,7 @@ class EventDetailsPresenterImpl(var eventDetailsView: EventDetailsView) : EventD
                 this@EventDetailsPresenterImpl.event = eventRepository.getEventById(eventId!!)
                 updateUI()
             }
-            else -> eventDetailsView.updateDate(sharedPrefsRepository.getDateString("cachedDate"))
+            else -> eventDetailsView.updateDate(sharedPrefsRepository.getDateString(Constants.CACHED_DATE))
         }
     }
 

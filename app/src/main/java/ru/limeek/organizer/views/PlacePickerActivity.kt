@@ -4,19 +4,15 @@ import android.Manifest
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import ru.limeek.organizer.R
 import ru.limeek.organizer.data.model.location.Location
-import ru.limeek.organizer.databinding.ActivityPlacepickerBinding
 import ru.limeek.organizer.viewmodels.PlacePickerViewModel
 
 class PlacePickerActivity: AppCompatActivity() {
@@ -24,16 +20,14 @@ class PlacePickerActivity: AppCompatActivity() {
     private val DEFAULT_ZOOM = 15f
 
     lateinit var mapFragment: SupportMapFragment
-    private lateinit var binding: ActivityPlacepickerBinding
     private lateinit var viewModel: PlacePickerViewModel
     lateinit var googleMap: GoogleMap
     lateinit var currentLocation: Location
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_placepicker)
+        setContentView(R.layout.activity_placepicker)
         viewModel = ViewModelProviders.of(this).get(PlacePickerViewModel::class.java)
-        binding.viewModel = viewModel
 
         mapFragment = SupportMapFragment()
         supportFragmentManager.beginTransaction().replace(R.id.mapFragContainer, mapFragment).commit()
@@ -45,7 +39,7 @@ class PlacePickerActivity: AppCompatActivity() {
 
     }
 
-    fun getCurrentLocation(){
+    private fun getCurrentLocation(){
         val client = FusedLocationProviderClient(this)
         if(PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED &&
                 PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED)
