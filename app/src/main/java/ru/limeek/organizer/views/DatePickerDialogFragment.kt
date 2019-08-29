@@ -3,7 +3,6 @@ package ru.limeek.organizer.views
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import org.joda.time.DateTime
@@ -11,7 +10,6 @@ import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.util.SingleLiveEvent
 import timber.log.Timber
-import java.time.LocalDate
 
 class DatePickerDialogFragment : DialogFragment() {
     var year: Int = 0

@@ -111,7 +111,7 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
 
     private fun getViewComponent() : ViewComponent {
         if(component == null){
-            component = App.instance.component.newViewComponent(PresenterModule(this))
+//            component = App.instance.component.newViewComponent(PresenterModule(this))
         }
         return component!!
     }

@@ -9,9 +9,5 @@
         android:id="@+id/navigation_locations"
         android:icon="@drawable/ic_room_black_24dp"
         android:title="@string/title_locations" />
-    <item
-        android:id="@+id/navigation_digest"
-        android:icon="@drawable/ic_description_black_24dp"
-        android:title="@string/digest" />
 
 </menu>

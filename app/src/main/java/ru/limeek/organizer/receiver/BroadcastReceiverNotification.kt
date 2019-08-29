@@ -1,5 +1,6 @@
 package ru.limeek.organizer.receiver
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -20,8 +21,7 @@ class BroadcastReceiverNotification : BroadcastReceiver() {
         createEventNotification(context,intent)
     }
 
-    fun createEventNotification(context: Context?, intent: Intent?){
-
+    private fun createEventNotification(context: Context?, intent: Intent?){
         val eventId = intent?.getLongExtra("eventId",0)
         val notificationTitle = context?.getString(R.string.app_name)
         val notificationContent = intent?.getStringExtra("content")
@@ -43,9 +43,8 @@ class BroadcastReceiverNotification : BroadcastReceiver() {
                 .setAutoCancel(true)
                 .build()
 
-
-        App.instance.notificationManager.notify(eventId.toInt(),notification)
-
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
+        notificationManager.notify(eventId.toInt(),notification)
     }
 
 }

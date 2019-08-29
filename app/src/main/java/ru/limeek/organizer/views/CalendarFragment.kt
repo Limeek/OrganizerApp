@@ -25,7 +25,7 @@ class CalendarFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        App.instance.component.newViewViewModelComponent(ViewModelModule(this)).inject(this)
+        App.instance.component.newViewComponent(ViewModelModule(this)).inject(this)
         viewModel.onCreate()
         observeLiveData()
     }

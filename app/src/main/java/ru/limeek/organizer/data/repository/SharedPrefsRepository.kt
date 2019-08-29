@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class SharedPrefsRepository @Inject constructor(private var sharedPreferences: SharedPreferences) {
     fun putDateTime(key: String, data: DateTime){
-        sharedPreferences.edit().putString(key,data.toString()).apply()
+        sharedPreferences.edit().putString(key,data.toString(Constants.FORMAT_DD_MM_YY_HH_MM)).apply()
     }
 
     fun putDataString(key: String, data: String){

@@ -43,7 +43,7 @@ class EventDetailsPresenterImpl(var eventDetailsView: EventDetailsView) : EventD
     lateinit var locationRepository: LocationRepository
 
     init {
-        App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
+//        App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
     }
 
     override fun submit() {
@@ -125,7 +125,7 @@ class EventDetailsPresenterImpl(var eventDetailsView: EventDetailsView) : EventD
 
             val pendingIntent = PendingIntent.getBroadcast(App.instance.applicationContext, event!!.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            App.instance.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, event!!.dateTime.millis - remindTime!!.millis!!, pendingIntent)
+//            App.instance.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, event!!.dateTime.millis - remindTime!!.millis!!, pendingIntent)
         }
     }
 

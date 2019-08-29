@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_event_details.*
+import kotlinx.android.synthetic.main.toolbar.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.data.model.event.Event
@@ -28,7 +29,7 @@ class EventDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
-        App.instance.component.newViewViewModelComponent(ViewModelModule(this)).inject(this)
+        App.instance.component.newViewComponent(ViewModelModule(this)).inject(this)
         initViewModel()
         observeLiveData()
         initViewListeners()
@@ -36,7 +37,10 @@ class EventDetailsActivity : AppCompatActivity() {
     }
 
     private fun initToolbar(){
+        toolbar.title = title
         toolbar.inflateMenu(R.menu.event_details_menu)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbar.setNavigationOnClickListener { finish() }
         toolbar.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.action_submit -> {
@@ -61,6 +65,7 @@ class EventDetailsActivity : AppCompatActivity() {
         viewModel.summary.observe(this, Observer { etSummary.setText(it) })
         viewModel.remindTime.observe(this, Observer { updateRemindTime(it) })
         viewModel.location.observe(this, Observer { updateLocation(it) })
+        viewModel.finish.observe(this, Observer{ finish() })
     }
 
     private fun initNotificationSpinner(list: List<RemindTime>) {
@@ -97,16 +102,24 @@ class EventDetailsActivity : AppCompatActivity() {
     }
 
     private fun showLocCreation(value: Boolean) {
-        if (value)
-            linearLayoutLocationCreation.visibility = View.VISIBLE
-        else
-            linearLayoutLocationCreation.visibility = View.GONE
+        linearLayoutLocationCreation.visibility = if(value) View.VISIBLE else View.GONE
     }
+
+    private fun showNotificationLayout(value: Boolean){
+        linearLayoutNotification.visibility = if(value) View.VISIBLE else View.GONE
+    }
+
+    private fun showLocationChooseLayout(value: Boolean){
+        linearLayoutLocationChoose.visibility = if(value) View.VISIBLE else View.GONE
+    }
+
 
     private fun initViewListeners(){
         etDate.setOnClickListener { showDatePicker() }
         etTime.setOnClickListener { showTimePicker() }
         etSummary.addTextChangedListener(summaryTextWatcher)
+        switchNotification.setOnCheckedChangeListener { _, isChecked -> showNotificationLayout(isChecked) }
+        switchLocation.setOnCheckedChangeListener { _, isChecked -> showLocationChooseLayout(isChecked) }
     }
 
     private fun initViewModel() {

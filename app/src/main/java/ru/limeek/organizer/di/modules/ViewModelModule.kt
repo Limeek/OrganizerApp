@@ -5,10 +5,17 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import dagger.Module
 import dagger.Provides
-import ru.limeek.organizer.data.repository.*
+import ru.limeek.organizer.data.repository.EventRepository
+import ru.limeek.organizer.data.repository.LocationRepository
+import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.di.scopes.ViewModelScope
-import ru.limeek.organizer.viewmodels.*
-import ru.limeek.organizer.viewmodels.factories.*
+import ru.limeek.organizer.viewmodels.CalendarViewModel
+import ru.limeek.organizer.viewmodels.EventDetailsViewModel
+import ru.limeek.organizer.viewmodels.EventsViewModel
+import ru.limeek.organizer.viewmodels.MainViewModel
+import ru.limeek.organizer.viewmodels.factories.CalendarViewModelFactory
+import ru.limeek.organizer.viewmodels.factories.EventDetailsViewModelFactory
+import ru.limeek.organizer.viewmodels.factories.EventsViewModelFactory
 
 @Module
 class ViewModelModule() {
@@ -50,17 +57,5 @@ class ViewModelModule() {
                                      locationRepository: LocationRepository): EventDetailsViewModel {
         return ViewModelProviders.of(activity!!, EventDetailsViewModelFactory(sharedPrefsRepo, eventsRepo, locationRepository))
                 .get(EventDetailsViewModel::class.java)
-    }
-
-    @Provides
-    @ViewModelScope
-    fun provideWeatherViewModel(weatherRepo: WeatherRepository): WeatherViewModel{
-        return ViewModelProviders.of(fragment!!, WeatherViewModelFactory(weatherRepo)).get(WeatherViewModel::class.java)
-    }
-
-    @Provides
-    @ViewModelScope
-    fun provideNewsViewModel(newsRepo: NewsRepository): NewsViewModel{
-        return ViewModelProviders.of(fragment!!, NewsViewModelFactory(newsRepo)).get(NewsViewModel::class.java)
     }
 }

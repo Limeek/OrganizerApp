@@ -18,7 +18,7 @@ class LocationDetailsPresenterImpl(var locationDetailsView: LocationDetailsView?
     lateinit var locationRepository: LocationRepository
 
     init {
-        App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
+//        App.instance.component.newPresenterComponent(RepositoryModule()).inject(this)
     }
 
     override fun delete() {

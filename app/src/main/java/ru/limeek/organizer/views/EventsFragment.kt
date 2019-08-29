@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_calendar_events.*
+import kotlinx.android.synthetic.main.fragment_calendar_events.view.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.adapter.EventsListAdapter
 import ru.limeek.organizer.app.App
@@ -28,7 +30,6 @@ class EventsFragment : Fragment(){
 
     private val adapter: EventsListAdapter by lazy {
         EventsListAdapter().apply {
-            recViewEvents.adapter = this
             onItemClick = adapterOnClick
         }
     }
@@ -47,6 +48,12 @@ class EventsFragment : Fragment(){
         viewModel.refresh()
         observeLiveData()
         floatingButton.setOnClickListener { startDetailsActivity() }
+        initRecycler()
+    }
+
+    private fun initRecycler(){
+        view?.recViewEvents?.adapter = adapter
+        view?.recViewEvents?.layoutManager = LinearLayoutManager(context)
     }
 
     private fun observeLiveData(){
@@ -57,6 +64,10 @@ class EventsFragment : Fragment(){
         viewModel.events.observe(viewLifecycleOwner, Observer{
             adapter.dataset = it
             adapter.notifyDataSetChanged()
+        })
+
+        viewModel.currentDateString.observe(viewLifecycleOwner, Observer {
+            tvCurrentDate.text = it
         })
     }
 
@@ -72,7 +83,7 @@ class EventsFragment : Fragment(){
 
     private fun getViewComponent() : ViewViewModelComponent{
         if(component == null){
-            component = App.instance.component.newViewViewModelComponent(ViewModelModule(this))
+            component = App.instance.component.newViewComponent(ViewModelModule(this))
         }
         return component!!
     }

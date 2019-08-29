@@ -1,6 +1,9 @@
 package ru.limeek.organizer.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -57,25 +60,25 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
     }
 
     fun updateEventRemindTime(position: Int){
-        event.value?.remind = remindTimeList.value?.get(position)!!
+        event.value!!.remind = remindTimeList.value?.get(position)!!
     }
 
     fun updateEventLocation(position: Int){
-        event.value?.location = userLocationList.value?.get(position)
+        event.value!!.location = userLocationList.value?.get(position)
     }
 
     fun updateDate(date: String){
         if(time.value == "")
-            event.value?.dateTime = DateTime.parse(date, DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY))
+            event.value = event.value?.copy(dateTime = DateTime.parse(date, DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY)))
         else
-            event.value?.dateTime = DateTime.parse("$date${time.value}", DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM))
+            event.value = event.value?.copy(dateTime = DateTime.parse("$date${time.value}", DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM)))
     }
 
     fun updateTime(time: String){
         if(date.value == "")
-            event.value?.dateTime = DateTime.parse(time, DateTimeFormat.forPattern(Constants.FORMAT_HH_mm))
+            event.value = event.value?.copy(dateTime = DateTime.parse(time, DateTimeFormat.forPattern(Constants.FORMAT_HH_mm)))
         else
-            event.value?.dateTime = DateTime.parse("${date.value}$time", DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM))
+            event.value = event.value?.copy(dateTime = DateTime.parse("${date.value}$time", DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM)))
     }
 
     fun updateSummary(summary: String){
@@ -84,7 +87,8 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
 
     private fun initSpinnerItems(){
         viewModelScope.launch {
-            remindTimeList.value = RemindTime.values().toList()
+            val neededRemindTimes = RemindTime.values().toList().drop(1)
+            remindTimeList.value = neededRemindTimes
             userLocationList.value = getUserLocations()
         }
     }
@@ -98,18 +102,21 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
     private fun insertEvent(){
         viewModelScope.launch {
             eventRepo.insert(event.value!!)
+            finish.callAsync()
         }
     }
 
     private fun updateEvent(){
         viewModelScope.launch {
             eventRepo.update(event.value!!)
+            finish.callAsync()
         }
     }
 
     private fun removeEvent(){
         viewModelScope.launch {
             eventRepo.delete(event.value!!)
+            finish.callAsync()
         }
     }
 

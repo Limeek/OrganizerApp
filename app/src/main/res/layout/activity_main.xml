@@ -7,11 +7,6 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
-
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -20,17 +15,27 @@
         tools:context=".views.MainActivity"
         tools:layout_editor_absoluteY="81dp">
 
+        <include
+            android:id="@+id/includeToolbar"
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <FrameLayout
             android:id="@+id/calendarFragContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.6" />
 
         <FrameLayout
             android:id="@+id/fragContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.4" />
 
     </LinearLayout>
 
