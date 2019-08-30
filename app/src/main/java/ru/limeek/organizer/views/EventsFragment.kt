@@ -14,7 +14,7 @@ import ru.limeek.organizer.R
 import ru.limeek.organizer.adapter.EventsListAdapter
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.data.model.event.Event
-import ru.limeek.organizer.di.components.ViewViewModelComponent
+import ru.limeek.organizer.di.components.ViewComponent
 import ru.limeek.organizer.di.modules.ViewModelModule
 import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.viewmodels.EventsViewModel
@@ -26,7 +26,7 @@ class EventsFragment : Fragment(){
     @Inject
     lateinit var viewModel: EventsViewModel
 
-    private var component : ViewViewModelComponent? = null
+    private var component : ViewComponent? = null
 
     private val adapter: EventsListAdapter by lazy {
         EventsListAdapter().apply {
@@ -81,7 +81,7 @@ class EventsFragment : Fragment(){
         startActivity(intent)
     }
 
-    private fun getViewComponent() : ViewViewModelComponent{
+    private fun getViewComponent() : ViewComponent {
         if(component == null){
             component = App.instance.component.newViewComponent(ViewModelModule(this))
         }

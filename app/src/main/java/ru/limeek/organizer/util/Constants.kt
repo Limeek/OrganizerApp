@@ -11,6 +11,8 @@ object Constants {
     const val EVENT = "EVENT"
     const val EVENT_ID = "EVENT_ID"
     const val CACHED_DATE = "CACHED_DATE"
+    const val LOCATION = "LOCATION"
     const val DATE = "DATE"
     const val TIME = "TIME"
+    const val FROM_EVENT_DETAILS = "FROM_EVENT_DETAILS"
 }

@@ -3,26 +3,30 @@ package ru.limeek.organizer.views
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_location_details.*
+import kotlinx.android.synthetic.main.toolbar.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.di.components.ViewComponent
-import ru.limeek.organizer.di.modules.PresenterModule
-import ru.limeek.organizer.presenters.LocationDetailsPresenter
+import ru.limeek.organizer.di.modules.ViewModelModule
+import ru.limeek.organizer.util.Constants
+import ru.limeek.organizer.viewmodels.LocationDetailsViewModel
 import javax.inject.Inject
 
-class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
+class LocationDetailsActivity : AppCompatActivity() {
     private val logTag = "LocationDetailsActivity"
     private val PLACE_PICKER_REQUEST = 1
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
     private var component : ViewComponent? = null
+    private var fromEventDetails: Boolean = false
 
     @Inject
-    lateinit var presenter : LocationDetailsPresenter
+    internal lateinit var viewModel: LocationDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,120 +34,81 @@ class LocationDetailsActivity : LocationDetailsView, AppCompatActivity() {
 
         getViewComponent().inject(this)
 
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-//        etAddress.setOnClickListener{startPlacePicker()}
-
-        presenter.onCreate()
+        fromEventDetails = intent.getBooleanExtra(Constants.FROM_EVENT_DETAILS, false)
+        viewModel.init(intent.extras?.getParcelable(Constants.LOCATION))
+        initToolbar()
+        observeLiveData()
+        initViewListeners()
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.location_details_menu, menu)
-        val itemDelete = menu?.findItem(R.id.delete)
-
-        if(!intent.hasExtra("location"))
-            itemDelete?.isVisible = false
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
-            android.R.id.home ->
-                finish()
-            R.id.delete -> {
-                presenter.delete()
-                startLocationActivity()
-            }
-            R.id.submit -> {
-                presenter.submit()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun startLocationActivity(){
-        val backIntent = Intent(this, LocationActivity::class.java)
-        startActivity(backIntent)
-        finish()
-    }
-
-    override fun getLocation() : Location? {
-        if(intent.hasExtra("location"))
-            return intent.extras?.getParcelable("location")
-        return null
-    }
-
-    override fun getFromEventDetails(): Boolean? {
-        if(intent.hasExtra("fromEventDetails"))
-            return intent.getBooleanExtra("fromEventDetails",true)
-        return null
-    }
-
-//    private fun startPlacePicker() {
-//        if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-//                baseContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_CODE_ASK_PERMISSIONS)
-//
-//        if(baseContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_DENIED &&
-//                baseContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_DENIED) {
-//            val ppIntent = PlacePicker.IntentBuilder().build(this)
-//            try {
-//                startActivityForResult(ppIntent, PLACE_PICKER_REQUEST)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK)
-//            when(requestCode){
-//                PLACE_PICKER_REQUEST -> {
-//                    val place = PlacePicker.getPlace(this,data)
-//                    presenter.createLocation(place)
-//                    etAddress.setText(place.address)
-//                }
-//            }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun observeLiveData(){
+        viewModel.name.observe(this, Observer { etName.setText(it) })
+        viewModel.address.observe(this, Observer { etAddress.setText(it) })
+        viewModel.finish.observe(this, Observer{ finish(it) })
+    }
+
+    private fun initToolbar(){
+        toolbar.title = title
+        toolbar.inflateMenu(R.menu.event_details_menu)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        toolbar.setNavigationOnClickListener { finish() }
+        toolbar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.action_submit -> {
+                    viewModel.submit()
+                    true
+                }
+                R.id.action_delete ->{
+                    viewModel.delete()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun initViewListeners(){
+        etName.addTextChangedListener(nameTextWatcher)
+        etAddress.addTextChangedListener(addressTextWatcher)
     }
 
     private fun getViewComponent() : ViewComponent {
         if(component == null){
-//            component = App.instance.component.newViewComponent(PresenterModule(this))
+            component = App.instance.component.newViewComponent(ViewModelModule(this))
         }
         return component!!
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
-        presenter.onDestroy()
+    private fun finish(location: Location){
+        if(fromEventDetails){
+            val intent = Intent()
+            intent.putExtra(Constants.LOCATION, location)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
+        else{
+            finish()
+        }
     }
 
-    override fun startEventDetailsWithResult(bundle: Bundle) {
-        val intent = Intent(this, EventDetailsActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra("location",bundle)
-        setResult(Activity.RESULT_OK,intent)
-        finish()
+    private val nameTextWatcher = object: TextWatcher{
+        override fun afterTextChanged(p0: Editable?) {
+            viewModel.updateName(p0.toString())
+        }
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
 
-    override fun updateAddress(address: String) {
-        etAddress.setText(address)
+    private val addressTextWatcher = object: TextWatcher{
+        override fun afterTextChanged(p0: Editable?) {
+            viewModel.updateAddress(p0.toString())
+        }
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
-
-    override fun updateName(name: String) {
-        etName.setText(name)
-    }
-
-    override fun getName(): String {
-        return etName.text.toString()
-    }
-
-    override fun getAddress(): String {
-        return etAddress.text.toString()
-    }
-
 }

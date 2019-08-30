@@ -18,7 +18,7 @@ import ru.limeek.organizer.util.SingleLiveEvent
 
 class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
                             private var eventRepo: EventRepository,
-                            private var locationRepo: LocationRepository) : ViewModel(){
+                            private var locationRepo: LocationRepository) : ViewModel() {
 
     private var event = MutableLiveData<Event>()
     private var oldEvent: Event? = null
@@ -29,25 +29,26 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
     var date = Transformations.map(event) { event -> event.getDate() }
     var time = Transformations.map(event) { event -> event.getTime() }
     var summary = Transformations.map(event) { event -> event.summary }
-    var remindTime = Transformations.map(event) {event -> event.remind }
-    var location = Transformations.map(event) {event -> event.location }
+    var remindTime = Transformations.map(event) { event -> event.remind }
+    var location = Transformations.map(event) { event -> event.location }
     val remindTimeList = SingleLiveEvent<List<RemindTime>>()
     val userLocationList = SingleLiveEvent<List<Location>>()
     val finish = SingleLiveEvent<Boolean>()
 
-    fun init(event: Event){
+    fun init(event: Event) {
         this.event.value = event
         initSpinnerItems()
-        oldEvent = event
+        oldEvent = event.copy()
     }
 
-    fun init(){
+    fun init() {
         event.value = Event()
         event.value?.dateTime = sharedPresRepo.getDateTime(Constants.CACHED_DATE)
         initSpinnerItems()
     }
 
-    fun submitEvent(){
+
+    fun submitEvent() {
         when (oldEvent) {
             event.value!! -> finish.value = true
             null -> insertEvent()
@@ -55,37 +56,47 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
         }
     }
 
-    fun deleteEvent(){
-         removeEvent()
+    fun deleteEvent() {
+        removeEvent()
     }
 
-    fun updateEventRemindTime(position: Int){
+    fun updateEventRemindTime(position: Int) {
         event.value!!.remind = remindTimeList.value?.get(position)!!
     }
 
-    fun updateEventLocation(position: Int){
-        event.value!!.location = userLocationList.value?.get(position)
+    fun updateEventLocation(position: Int) {
+        event.value!!.location = userLocationList.value?.get(position - 1)
     }
 
-    fun updateDate(date: String){
-        if(time.value == "")
+    fun updateEventLocation(location: Location) {
+        event.value = event.value?.copy().apply { this?.location = location }
+    }
+
+    fun updateDate(date: String) {
+        if (time.value == "")
             event.value = event.value?.copy(dateTime = DateTime.parse(date, DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YYYY)))
         else
             event.value = event.value?.copy(dateTime = DateTime.parse("$date${time.value}", DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM)))
     }
 
-    fun updateTime(time: String){
-        if(date.value == "")
+    fun updateTime(time: String) {
+        if (date.value == "")
             event.value = event.value?.copy(dateTime = DateTime.parse(time, DateTimeFormat.forPattern(Constants.FORMAT_HH_mm)))
         else
             event.value = event.value?.copy(dateTime = DateTime.parse("${date.value}$time", DateTimeFormat.forPattern(Constants.FORMAT_DD_MM_YY_HH_MM)))
     }
 
-    fun updateSummary(summary: String){
+    fun updateSummary(summary: String) {
         event.value?.summary = summary
     }
 
-    private fun initSpinnerItems(){
+    fun initLocationSpinnerItems() {
+        viewModelScope.launch {
+            userLocationList.value = getUserLocations()
+        }
+    }
+
+    private fun initSpinnerItems() {
         viewModelScope.launch {
             val neededRemindTimes = RemindTime.values().toList().drop(1)
             remindTimeList.value = neededRemindTimes
@@ -93,34 +104,34 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
         }
     }
 
-    private fun getEventById(){
+    private fun getEventById() {
         viewModelScope.launch {
             event.value = eventRepo.getEventById(eventId.toLong())
         }
     }
 
-    private fun insertEvent(){
+    private fun insertEvent() {
         viewModelScope.launch {
             eventRepo.insert(event.value!!)
             finish.callAsync()
         }
     }
 
-    private fun updateEvent(){
+    private fun updateEvent() {
         viewModelScope.launch {
             eventRepo.update(event.value!!)
             finish.callAsync()
         }
     }
 
-    private fun removeEvent(){
+    private fun removeEvent() {
         viewModelScope.launch {
             eventRepo.delete(event.value!!)
             finish.callAsync()
         }
     }
 
-    private suspend fun getUserLocations(): List<Location>{
+    private suspend fun getUserLocations(): List<Location> {
         return locationRepo.getUserCreatedLocations()
     }
 }

@@ -1,5 +1,7 @@
 package ru.limeek.organizer.views
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,6 +28,11 @@ class EventDetailsActivity : AppCompatActivity() {
     @Inject
     internal lateinit var viewModel: EventDetailsViewModel
 
+    private lateinit var locationStringList: List<String>
+    private lateinit var notificationStringList: List<String>
+
+    private val REQ_CODE_LOCATION = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
@@ -34,6 +41,18 @@ class EventDetailsActivity : AppCompatActivity() {
         observeLiveData()
         initViewListeners()
         initToolbar()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode == Activity.RESULT_OK){
+            when(requestCode){
+                REQ_CODE_LOCATION -> {
+                    viewModel.initLocationSpinnerItems()
+                    viewModel.updateEventLocation(data!!.extras?.getParcelable(Constants.LOCATION) as Location)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun initToolbar(){
@@ -69,8 +88,8 @@ class EventDetailsActivity : AppCompatActivity() {
     }
 
     private fun initNotificationSpinner(list: List<RemindTime>) {
-        val stringList = list.map { it.toString() }
-        val adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, stringList)
+        notificationStringList = list.map { it.toString() }
+        val adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, notificationStringList)
         spinnerRemind.adapter = adapter
         spinnerRemind.onItemSelectedListener = onRemindTimeClick
     }
@@ -78,24 +97,33 @@ class EventDetailsActivity : AppCompatActivity() {
     private fun initLocationSpinner(list: List<Location>) {
         val stringList = list.map { it.name }.toMutableList()
         stringList.add(0, getString(R.string.choose))
+        stringList.add(getString(R.string.new_location))
         stringList.add(getString(R.string.custom_location))
-        val adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, stringList)
+        locationStringList = stringList
+        val adapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, locationStringList)
         spinnerLocation.adapter = adapter
         spinnerLocation.onItemSelectedListener = onLocationClick
     }
 
     private fun updateRemindTime(remindTime: RemindTime) {
         if (remindTime != RemindTime.NOREMIND) {
+            switchNotification.isChecked = true
             linearLayoutNotification.visibility = View.VISIBLE
             spinnerRemind.setSelection(RemindTime.values().indexOf(remindTime))
-        } else
+        } else {
+            switchNotification.isChecked = false
             linearLayoutNotification.visibility = View.GONE
+        }
     }
 
     private fun updateLocation(location: Location?) {
         if (location != null) {
+            switchLocation.isChecked = true
             linearLayoutLocationChoose.visibility = View.VISIBLE
+            if(location.createdByUser)
+                spinnerLocation.setSelection(locationStringList.indexOf(location.name))
         } else {
+            switchLocation.isChecked = false
             linearLayoutLocationChoose.visibility = View.GONE
             linearLayoutLocationCreation.visibility = View.GONE
         }
@@ -112,7 +140,6 @@ class EventDetailsActivity : AppCompatActivity() {
     private fun showLocationChooseLayout(value: Boolean){
         linearLayoutLocationChoose.visibility = if(value) View.VISIBLE else View.GONE
     }
-
 
     private fun initViewListeners(){
         etDate.setOnClickListener { showDatePicker() }
@@ -143,14 +170,27 @@ class EventDetailsActivity : AppCompatActivity() {
         timePickerDialog.show(supportFragmentManager, TimePickerDialogFragment.TAG)
     }
 
+    private fun startLocCreateActivity(){
+        val intent = Intent(this, LocationDetailsActivity::class.java)
+        intent.putExtra(Constants.FROM_EVENT_DETAILS, true)
+        startActivityForResult(intent, 1)
+    }
+
     private val onLocationClick = object: OnItemSelectedListener {
         override fun onNothingSelected(p0: AdapterView<*>?) {}
         override fun onItemSelected(av: AdapterView<*>, p1: View?, position: Int, p3: Long) {
-            if (position != 0 && position != av.childCount) {
-                viewModel.updateEventLocation(position)
-                showLocCreation(false)
-            } else if (position == av.childCount - 1)
-                showLocCreation(true)
+            when {
+                av.getItemAtPosition(position) == getString(R.string.custom_location) -> showLocCreation(true)
+                av.getItemAtPosition(position) == getString(R.string.new_location) -> {
+                    startLocCreateActivity()
+                    showLocCreation(false)
+                }
+                position != 0 -> {
+                    viewModel.updateEventLocation(position)
+                    showLocCreation(false)
+                }
+                else -> showLocCreation(false)
+            }
         }
     }
 

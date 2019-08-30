@@ -23,6 +23,8 @@ data class Location(
         this.id = id
     }
 
+    @Ignore
+    constructor(): this(0, 0.0, 0.0, "", "", false)
 
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.writeLong(id)

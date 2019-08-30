@@ -13,7 +13,7 @@ import ru.limeek.organizer.R
 import ru.limeek.organizer.adapter.LocationsAdapter
 import ru.limeek.organizer.app.App
 import ru.limeek.organizer.data.model.location.Location
-import ru.limeek.organizer.di.components.ViewViewModelComponent
+import ru.limeek.organizer.di.components.ViewComponent
 import ru.limeek.organizer.di.modules.ViewModelModule
 import ru.limeek.organizer.viewmodels.LocationViewModel
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class LocationActivity : AppCompatActivity() {
     private val LOG_TAG = "LocationActivity"
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
 
-    private var component: ViewViewModelComponent? = null
+    private var component: ViewComponent? = null
 
     private val adapter: LocationsAdapter by lazy {
         LocationsAdapter().apply {
@@ -102,7 +102,7 @@ class LocationActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getViewComponent(): ViewViewModelComponent {
+    private fun getViewComponent(): ViewComponent {
         if (component == null) {
             component = App.instance.component.newViewComponent(ViewModelModule(this))
         }

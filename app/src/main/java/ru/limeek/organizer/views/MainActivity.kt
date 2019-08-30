@@ -12,14 +12,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
 import ru.limeek.organizer.R
 import ru.limeek.organizer.app.App
-import ru.limeek.organizer.di.components.ViewViewModelComponent
+import ru.limeek.organizer.di.components.ViewComponent
 import ru.limeek.organizer.di.modules.ViewModelModule
 import ru.limeek.organizer.viewmodels.MainViewModel
 import javax.inject.Inject
 
-class MainActivity : MainView, AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
-    private var component: ViewViewModelComponent? = null
+    private var component: ViewComponent? = null
 
     @Inject
     lateinit var viewModel: MainViewModel
@@ -45,7 +45,7 @@ class MainActivity : MainView, AppCompatActivity() {
         checkAndRequestPermissions()
     }
 
-    override fun refreshEventsFragment() {
+    fun refreshEventsFragment() {
         eventFragment.refresh()
     }
 
@@ -69,7 +69,7 @@ class MainActivity : MainView, AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fragContainer, eventFragment).commit()
     }
 
-    private fun getViewComponent(): ViewViewModelComponent {
+    private fun getViewComponent(): ViewComponent {
         component = App.instance.component.newViewComponent(ViewModelModule(this))
         return component!!
     }

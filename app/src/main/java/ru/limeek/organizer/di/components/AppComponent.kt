@@ -8,6 +8,6 @@ import ru.limeek.organizer.di.scopes.AppScope
 @AppScope
 @Component(modules = [AppModule::class, RoomModule::class, SharedPreferencesModule::class, RetrofitModule::class])
 interface AppComponent {
-    fun newViewComponent(viewModelModule: ViewModelModule): ViewViewModelComponent
+    fun newViewComponent(viewModelModule: ViewModelModule): ViewComponent
     fun inject(app : App)
 }
