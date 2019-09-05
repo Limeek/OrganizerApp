@@ -2,6 +2,7 @@ package ru.limeek.organizer.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.repository.EventRepository
@@ -10,11 +11,9 @@ import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.util.SingleLiveEvent
 import kotlin.coroutines.CoroutineContext
 
-class EventsViewModel(private var sharedPrefsRepo: SharedPrefsRepository,
-                      private var eventRepository: EventRepository) : ViewModel(), CoroutineScope {
+class EventsViewModel(private val sharedPrefsRepo: SharedPrefsRepository,
+                      private val eventRepository: EventRepository) : ViewModel() {
     val logTag = "EventsPresenter"
-
-    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
     var events = MutableLiveData<List<Event>>()
     val startDetailsActivity = SingleLiveEvent<Unit>()
@@ -24,7 +23,7 @@ class EventsViewModel(private var sharedPrefsRepo: SharedPrefsRepository,
         startDetailsActivity.call()
     }
 
-    private fun updateEvents() = launch {
+    private fun updateEvents() = viewModelScope.launch {
         val dateEvents = eventRepository.getEventsByDate(sharedPrefsRepo.getDateTime(Constants.CACHED_DATE))
         events.postValue(dateEvents)
     }
@@ -33,10 +32,4 @@ class EventsViewModel(private var sharedPrefsRepo: SharedPrefsRepository,
         currentDateString.value = sharedPrefsRepo.getDateString(Constants.CACHED_DATE)
         updateEvents()
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        coroutineContext[Job]?.cancel()
-    }
-
 }

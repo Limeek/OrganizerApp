@@ -7,15 +7,14 @@ import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.data.model.location.LocationDao
 import javax.inject.Inject
 
-class LocationRepository @Inject constructor(private var locationDao: LocationDao,
-                                             private var eventDao: EventDao) {
+class LocationRepository @Inject constructor(private var locationDao: LocationDao) {
     suspend fun insert(location: Location): Long{
         return withContext(Dispatchers.IO) {
             locationDao.insert(location)
         }
     }
 
-    suspend fun update(location: Location){
+    suspend fun update(location: Location): Long{
         return withContext(Dispatchers.IO) {
             locationDao.update(location)
         }
@@ -36,17 +35,6 @@ class LocationRepository @Inject constructor(private var locationDao: LocationDa
     suspend fun getLocationById(id: Long): Location?{
         return withContext(Dispatchers.IO){
             locationDao.getLocationById(id)
-        }
-    }
-
-    suspend fun deleteLocation(location: Location){
-        return withContext(Dispatchers.IO){
-            val events = eventDao.getEventsByLocationId(location.id)
-            events.forEach {
-                it.locationId = null
-            }
-            eventDao.update(events)
-            delete(location)
         }
     }
 }

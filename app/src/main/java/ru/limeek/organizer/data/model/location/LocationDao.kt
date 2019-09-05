@@ -8,7 +8,7 @@ abstract class LocationDao {
     abstract suspend fun insert(location : Location?) : Long
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    abstract suspend fun update(location: Location?)
+    abstract suspend fun update(location: Location?): Long
 
     @Delete
     abstract suspend fun delete(location: Location?)

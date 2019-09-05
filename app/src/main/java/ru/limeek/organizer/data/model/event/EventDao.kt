@@ -26,7 +26,7 @@ interface EventDao{
     suspend fun delete(event: Event?)
 
     @Update
-    suspend fun update(event: Event?)
+    suspend fun update(event: Event?): Long
 
     @Update
     suspend fun update(events : List<Event>)
