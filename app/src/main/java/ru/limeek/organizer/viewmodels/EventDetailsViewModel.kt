@@ -10,15 +10,19 @@ import org.joda.time.format.DateTimeFormat
 import ru.limeek.organizer.data.model.event.Event
 import ru.limeek.organizer.data.model.event.RemindTime
 import ru.limeek.organizer.data.model.location.Location
-import ru.limeek.organizer.data.repository.EventRepository
-import ru.limeek.organizer.data.repository.LocationRepository
 import ru.limeek.organizer.data.repository.SharedPrefsRepository
+import ru.limeek.organizer.usecases.DeleteEventUseCase
+import ru.limeek.organizer.usecases.GetUserCreatedLocationsUseCase
+import ru.limeek.organizer.usecases.InsertEventUseCase
+import ru.limeek.organizer.usecases.UpdateEventUseCase
 import ru.limeek.organizer.util.Constants
 import ru.limeek.organizer.util.SingleLiveEvent
 
-class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
-                            private var eventRepo: EventRepository,
-                            private var locationRepo: LocationRepository) : ViewModel() {
+class EventDetailsViewModel(private val sharedPrefsRepo: SharedPrefsRepository,
+                            private val insertEventUseCase: InsertEventUseCase,
+                            private val updateEventUseCase: UpdateEventUseCase,
+                            private val deleteEventUseCase: DeleteEventUseCase,
+                            private val getUserCreatedLocationsUseCase: GetUserCreatedLocationsUseCase) : ViewModel() {
 
     private var event = MutableLiveData<Event>()
     private var oldEvent: Event? = null
@@ -43,7 +47,7 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
 
     fun init() {
         event.value = Event()
-        event.value?.dateTime = sharedPresRepo.getDateTime(Constants.CACHED_DATE)
+        event.value?.dateTime = sharedPrefsRepo.getDateTime(Constants.CACHED_DATE)
         initSpinnerItems()
     }
 
@@ -104,34 +108,28 @@ class EventDetailsViewModel(private var sharedPresRepo: SharedPrefsRepository,
         }
     }
 
-    private fun getEventById() {
-        viewModelScope.launch {
-            event.value = eventRepo.getEventById(eventId.toLong())
-        }
-    }
-
     private fun insertEvent() {
         viewModelScope.launch {
-            eventRepo.insert(event.value!!)
+            insertEventUseCase.execute(event.value!!)
             finish.callAsync()
         }
     }
 
     private fun updateEvent() {
         viewModelScope.launch {
-            eventRepo.update(event.value!!)
+            updateEventUseCase.execute(event.value!!)
             finish.callAsync()
         }
     }
 
     private fun removeEvent() {
         viewModelScope.launch {
-            eventRepo.delete(event.value!!)
+            deleteEventUseCase.execute(event.value!!)
             finish.callAsync()
         }
     }
 
     private suspend fun getUserLocations(): List<Location> {
-        return locationRepo.getUserCreatedLocations()
+        return getUserCreatedLocationsUseCase.execute()
     }
 }

@@ -57,9 +57,6 @@ class EventsFragment : Fragment(){
     }
 
     private fun observeLiveData(){
-        viewModel.startDetailsActivity.observe(viewLifecycleOwner, Observer{
-            startDetailsActivity()
-        })
 
         viewModel.events.observe(viewLifecycleOwner, Observer{
             adapter.dataset = it

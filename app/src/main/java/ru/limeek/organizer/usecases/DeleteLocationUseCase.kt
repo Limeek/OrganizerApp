@@ -7,12 +7,11 @@ import ru.limeek.organizer.data.repository.LocationRepository
 import javax.inject.Inject
 
 class DeleteLocationUseCase @Inject constructor(private val locationRepo: LocationRepository,
-                                                private val eventRepo: EventRepository) : UseCase<Location, Unit> {
+                                                private val eventRepo: EventRepository) {
 
-    override suspend fun execute(location: Location) {
+    suspend fun execute(location: Location) {
         if (location.createdByUser)
             deleteAllLocationIdsInEvents(location)
-
         deleteLocation(location)
     }
 

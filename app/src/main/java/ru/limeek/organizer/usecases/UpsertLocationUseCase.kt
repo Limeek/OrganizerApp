@@ -7,12 +7,12 @@ import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.data.repository.LocationRepository
 import javax.inject.Inject
 
-class UpsertLocationUseCase @Inject constructor(private val locationRepo: LocationRepository): UseCase<Location, Long> {
+class UpsertLocationUseCase @Inject constructor(private val locationRepo: LocationRepository){
 
-    override suspend fun execute(location: Location): Long {
+    suspend fun execute(location: Location?): Long {
         return withContext(Dispatchers.IO){
-            if(location.id != 0L)
-                updateLocation(location)
+            if(location?.id != 0L)
+                updateLocation(location!! )
             else
                 insertLocation(location)
         }

@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import ru.limeek.organizer.data.model.location.Location
 import ru.limeek.organizer.data.repository.LocationRepository
+import ru.limeek.organizer.usecases.GetUserCreatedLocationsUseCase
 import ru.limeek.organizer.util.SingleLiveEvent
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class LocationViewModel @Inject constructor(private var locationRepo: LocationRepository): ViewModel(), CoroutineScope {
+class LocationViewModel @Inject constructor(private val getUserCreatedLocationsUseCase: GetUserCreatedLocationsUseCase): ViewModel(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
@@ -26,7 +27,7 @@ class LocationViewModel @Inject constructor(private var locationRepo: LocationRe
 
     private fun getLocations(){
         launch {
-            locations.postValue(locationRepo.getUserCreatedLocations())
+            locations.postValue(getUserCreatedLocationsUseCase.execute())
         }
     }
 

@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.limeek.organizer.data.model.location.Location
-import ru.limeek.organizer.data.repository.LocationRepository
+import ru.limeek.organizer.usecases.DeleteLocationUseCase
+import ru.limeek.organizer.usecases.InsertLocationUseCase
+import ru.limeek.organizer.usecases.UpdateLocationUseCase
 import ru.limeek.organizer.util.SingleLiveEvent
 
-class LocationDetailsViewModel(private val locationRepository: LocationRepository): ViewModel() {
+class LocationDetailsViewModel(private val insertLocationUseCase: InsertLocationUseCase,
+                               private val updateLocationUseCase: UpdateLocationUseCase,
+                               private val deleteLocationUseCase: DeleteLocationUseCase): ViewModel() {
 
     var finish = SingleLiveEvent<Location>()
     var location = MutableLiveData<Location>()
@@ -35,7 +39,7 @@ class LocationDetailsViewModel(private val locationRepository: LocationRepositor
 
     fun delete() {
         viewModelScope.launch {
-            locationRepository.deleteLocation(location.value!!)
+            deleteLocationUseCase.execute(location.value!!)
             finish.call()
         }
     }
@@ -48,10 +52,10 @@ class LocationDetailsViewModel(private val locationRepository: LocationRepositor
 
             if(startLocation == null){
                 location.value!!.createdByUser = true
-                locationRepository.insert(location.value!!)
+                insertLocationUseCase.execute(location.value!!)
             }
             else
-                locationRepository.update(location.value!!)
+                updateLocationUseCase.execute(location.value!!)
 
             finish.value = location.value!!
         }
