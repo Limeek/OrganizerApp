@@ -3,7 +3,7 @@ package ru.limeek.organizer.data.repository
 import android.content.SharedPreferences
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import ru.limeek.organizer.util.Constants
+import ru.limeek.organizer.presentation.util.Constants
 import javax.inject.Inject
 
 class SharedPrefsRepository @Inject constructor(private var sharedPreferences: SharedPreferences) {

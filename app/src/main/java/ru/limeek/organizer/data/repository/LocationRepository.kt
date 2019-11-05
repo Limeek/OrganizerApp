@@ -2,19 +2,20 @@ package ru.limeek.organizer.data.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.limeek.organizer.data.model.event.EventDao
-import ru.limeek.organizer.data.model.location.Location
-import ru.limeek.organizer.data.model.location.LocationDao
+import ru.limeek.organizer.data.daos.EventDao
+import ru.limeek.organizer.domain.entities.location.Location
+import ru.limeek.organizer.data.daos.LocationDao
 import javax.inject.Inject
 
-class LocationRepository @Inject constructor(private var locationDao: LocationDao) {
+class LocationRepository @Inject constructor(private var locationDao: LocationDao,
+                                             eventDao: EventDao) {
     suspend fun insert(location: Location): Long{
         return withContext(Dispatchers.IO) {
             locationDao.insert(location)
         }
     }
 
-    suspend fun update(location: Location): Long{
+    suspend fun update(location: Location){
         return withContext(Dispatchers.IO) {
             locationDao.update(location)
         }
