@@ -2,7 +2,6 @@ package ru.limeek.organizer.presentation.viewmodels.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ru.limeek.organizer.data.repository.LocationRepository
 import ru.limeek.organizer.domain.usecases.GetUserCreatedLocationsUseCase
 import ru.limeek.organizer.presentation.viewmodels.LocationViewModel
 import javax.inject.Inject

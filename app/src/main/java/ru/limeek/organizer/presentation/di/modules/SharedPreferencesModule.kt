@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
-import ru.limeek.organizer.presentation.di.scopes.AppScope
+import ru.limeek.organizer.presentation.app.App
+import javax.inject.Singleton
 
 @Module
-open class SharedPreferencesModule(private val appContext: Context) {
+open class SharedPreferencesModule {
     @Provides
-    @AppScope
-    open fun provideSharedPreferences() : SharedPreferences{
-        return appContext.getSharedPreferences("OrganizerSharedPrefs", Context.MODE_PRIVATE)
+    @Singleton
+    open fun provideSharedPreferences(app: App) : SharedPreferences{
+        return app.applicationContext.getSharedPreferences("OrganizerSharedPrefs", Context.MODE_PRIVATE)
     }
 }

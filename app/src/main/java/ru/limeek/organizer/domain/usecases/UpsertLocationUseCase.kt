@@ -3,8 +3,8 @@ package ru.limeek.organizer.domain.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.limeek.organizer.domain.entities.location.Location
 import ru.limeek.organizer.data.repository.LocationRepository
+import ru.limeek.organizer.domain.entities.location.Location
 import javax.inject.Inject
 
 class UpsertLocationUseCase @Inject constructor(private val locationRepo: LocationRepository){

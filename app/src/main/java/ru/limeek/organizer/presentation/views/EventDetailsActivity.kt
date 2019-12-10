@@ -9,21 +9,19 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_event_details.*
 import kotlinx.android.synthetic.main.toolbar.*
 import ru.limeek.organizer.R
-import ru.limeek.organizer.presentation.app.App
 import ru.limeek.organizer.domain.entities.event.Event
 import ru.limeek.organizer.domain.entities.event.RemindTime
 import ru.limeek.organizer.domain.entities.location.Location
-import ru.limeek.organizer.presentation.di.modules.ViewModelModule
 import ru.limeek.organizer.presentation.util.Constants
 import ru.limeek.organizer.presentation.viewmodels.EventDetailsViewModel
 import javax.inject.Inject
 
-class EventDetailsActivity : AppCompatActivity() {
+class EventDetailsActivity : DaggerAppCompatActivity() {
 
     @Inject
     internal lateinit var viewModel: EventDetailsViewModel
@@ -36,7 +34,6 @@ class EventDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
-        App.instance.component.newViewComponent(ViewModelModule(this)).inject(this)
         initViewModel()
         observeLiveData()
         initViewListeners()

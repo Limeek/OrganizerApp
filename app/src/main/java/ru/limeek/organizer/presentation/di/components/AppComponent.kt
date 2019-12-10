@@ -1,13 +1,21 @@
 package ru.limeek.organizer.presentation.di.components
 
+import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjector
 import ru.limeek.organizer.presentation.app.App
 import ru.limeek.organizer.presentation.di.modules.*
-import ru.limeek.organizer.presentation.di.scopes.AppScope
+import javax.inject.Singleton
 
-@AppScope
-@Component(modules = [AppModule::class, RoomModule::class, SharedPreferencesModule::class, RetrofitModule::class])
-interface AppComponent {
-    fun newViewComponent(viewModelModule: ViewModelModule): ViewComponent
-    fun inject(app : App)
+@Singleton
+@Component(modules = [
+    RoomModule::class,
+    SharedPreferencesModule::class,
+    RetrofitModule::class,
+    BuilderModule::class])
+interface AppComponent: AndroidInjector<App>{
+    @Component.Factory
+    abstract class Factory : AndroidInjector.Factory<App>{
+        abstract override fun create(@BindsInstance app: App): AppComponent
+    }
 }

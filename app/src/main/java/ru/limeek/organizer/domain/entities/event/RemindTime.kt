@@ -3,9 +3,6 @@ package ru.limeek.organizer.domain.entities.event
 import android.os.Parcel
 import android.os.Parcelable
 import org.joda.time.Duration
-import ru.limeek.organizer.R
-import ru.limeek.organizer.presentation.app.App
-import ru.limeek.organizer.presentation.util.Constants
 
 enum class RemindTime(val millis : Long?) : Parcelable{
     NOREMIND(null),

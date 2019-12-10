@@ -2,9 +2,9 @@ package ru.limeek.organizer.domain.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.limeek.organizer.domain.entities.event.Event
 import ru.limeek.organizer.data.repository.EventRepository
 import ru.limeek.organizer.data.repository.LocationRepository
+import ru.limeek.organizer.domain.entities.event.Event
 import javax.inject.Inject
 
 class DeleteEventUseCase @Inject constructor(private val eventRepository: EventRepository,

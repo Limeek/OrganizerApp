@@ -4,16 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.calendar_fragment.*
 import ru.limeek.organizer.R
-import ru.limeek.organizer.presentation.app.App
-import ru.limeek.organizer.presentation.di.modules.ViewModelModule
 import ru.limeek.organizer.presentation.viewmodels.CalendarViewModel
 import javax.inject.Inject
 
-class CalendarFragment: Fragment() {
+class CalendarFragment: DaggerFragment() {
 
     @Inject
     lateinit var viewModel: CalendarViewModel
@@ -25,7 +23,6 @@ class CalendarFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        App.instance.component.newViewComponent(ViewModelModule(this)).inject(this)
         viewModel.onCreate()
         observeLiveData()
     }

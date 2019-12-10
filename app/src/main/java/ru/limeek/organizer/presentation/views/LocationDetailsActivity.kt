@@ -5,24 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_location_details.*
 import kotlinx.android.synthetic.main.toolbar.*
 import ru.limeek.organizer.R
-import ru.limeek.organizer.presentation.app.App
 import ru.limeek.organizer.domain.entities.location.Location
-import ru.limeek.organizer.presentation.di.components.ViewComponent
-import ru.limeek.organizer.presentation.di.modules.ViewModelModule
 import ru.limeek.organizer.presentation.util.Constants
 import ru.limeek.organizer.presentation.viewmodels.LocationDetailsViewModel
 import javax.inject.Inject
 
-class LocationDetailsActivity : AppCompatActivity() {
+class LocationDetailsActivity : DaggerAppCompatActivity() {
     private val logTag = "LocationDetailsActivity"
     private val PLACE_PICKER_REQUEST = 1
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
-    private var component : ViewComponent? = null
     private var fromEventDetails: Boolean = false
 
     @Inject
@@ -31,8 +27,6 @@ class LocationDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location_details)
-
-        getViewComponent().inject(this)
 
         fromEventDetails = intent.getBooleanExtra(Constants.FROM_EVENT_DETAILS, false)
         viewModel.init(intent.extras?.getParcelable(Constants.LOCATION))
@@ -75,13 +69,6 @@ class LocationDetailsActivity : AppCompatActivity() {
     private fun initViewListeners(){
         etName.addTextChangedListener(nameTextWatcher)
         etAddress.addTextChangedListener(addressTextWatcher)
-    }
-
-    private fun getViewComponent() : ViewComponent {
-        if(component == null){
-            component = App.instance.component.newViewComponent(ViewModelModule(this))
-        }
-        return component!!
     }
 
     private fun finish(location: Location){

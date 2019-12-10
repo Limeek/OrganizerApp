@@ -4,9 +4,9 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
 import org.joda.time.DateTime
-import ru.limeek.organizer.domain.entities.location.Location
 import ru.limeek.organizer.data.database.DateTimeConverter
 import ru.limeek.organizer.data.database.RemindTimeConverter
+import ru.limeek.organizer.domain.entities.location.Location
 import ru.limeek.organizer.presentation.util.Constants
 
 @Entity(tableName = "events",

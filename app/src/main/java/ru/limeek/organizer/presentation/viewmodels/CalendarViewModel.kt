@@ -19,6 +19,7 @@ class CalendarViewModel(private var repository: SharedPrefsRepository) : ViewMod
     }
 
     fun onCreate() {
+        repository.putDateTime(Constants.CACHED_DATE, DateTime.now())
         currDate.value = repository.getDateTime(Constants.CACHED_DATE).millis
     }
 }

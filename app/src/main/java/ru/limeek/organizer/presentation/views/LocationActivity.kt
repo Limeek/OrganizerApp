@@ -3,26 +3,21 @@ package ru.limeek.organizer.presentation.views
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import com.google.android.material.navigation.NavigationView
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_location.*
 import kotlinx.android.synthetic.main.toolbar.*
 import ru.limeek.organizer.R
-import ru.limeek.organizer.presentation.adapter.LocationsAdapter
-import ru.limeek.organizer.presentation.app.App
 import ru.limeek.organizer.domain.entities.location.Location
-import ru.limeek.organizer.presentation.di.components.ViewComponent
-import ru.limeek.organizer.presentation.di.modules.ViewModelModule
+import ru.limeek.organizer.presentation.adapter.LocationsAdapter
 import ru.limeek.organizer.presentation.viewmodels.LocationViewModel
 import javax.inject.Inject
 
-class LocationActivity : AppCompatActivity() {
+class LocationActivity : DaggerAppCompatActivity() {
     private val LOG_TAG = "LocationActivity"
     private val REQUEST_CODE_ASK_PERMISSIONS = 1
-
-    private var component: ViewComponent? = null
 
     private val adapter: LocationsAdapter by lazy {
         LocationsAdapter().apply {
@@ -60,7 +55,6 @@ class LocationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_location)
-        getViewComponent().inject(this)
 
         initToolbar()
         navView.setNavigationItemSelectedListener(navigationItemClick)
@@ -100,17 +94,5 @@ class LocationActivity : AppCompatActivity() {
         val calendarIntent = Intent(this, MainActivity::class.java)
         startActivity(calendarIntent)
         finish()
-    }
-
-    private fun getViewComponent(): ViewComponent {
-        if (component == null) {
-            component = App.instance.component.newViewComponent(ViewModelModule(this))
-        }
-        return component!!
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
     }
 }

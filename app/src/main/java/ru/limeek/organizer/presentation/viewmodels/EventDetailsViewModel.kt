@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.domain.entities.event.Event
 import ru.limeek.organizer.domain.entities.event.RemindTime
 import ru.limeek.organizer.domain.entities.location.Location
-import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.domain.usecases.DeleteEventUseCase
 import ru.limeek.organizer.domain.usecases.GetUserCreatedLocationsUseCase
 import ru.limeek.organizer.domain.usecases.InsertEventUseCase

@@ -31,7 +31,6 @@ class EventsListAdapter : RecyclerView.Adapter<EventsListAdapter.EventVH>(){
             itemView.tvEventSummary.text = event.summary
             itemView.tvTime.text = event.getTime()
             itemView.tvLocation.text = getLocText(event)
-
         }
 
         private fun getLocText(event: Event): String{

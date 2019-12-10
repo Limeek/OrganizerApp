@@ -9,10 +9,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import ru.limeek.organizer.components.DaggerTestAppComponent
+import ru.limeek.organizer.components.setTestComponent
 import ru.limeek.organizer.data.repository.EventRepository
 import ru.limeek.organizer.domain.entities.event.Event
 import ru.limeek.organizer.domain.entities.event.RemindTime
 import ru.limeek.organizer.modules.UnitTestRoomModule
+import ru.limeek.organizer.presentation.app.App
 import ru.limeek.organizer.presentation.di.modules.SharedPreferencesModule
 import javax.inject.Inject
 
@@ -28,12 +30,9 @@ class EventRepositoryTest {
 
     @Before
     fun before(){
-        val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-        DaggerTestAppComponent.builder()
-                .unitTestRoomModule(UnitTestRoomModule(context))
-                .sharedPreferencesModule(SharedPreferencesModule(context))
-                .build()
-                .inject(this)
+        val app = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as App
+        val component = DaggerTestAppComponent.factory().create(app)
+        app.setTestComponent(component)
     }
 
     @Test

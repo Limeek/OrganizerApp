@@ -3,10 +3,10 @@ package ru.limeek.organizer.data.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
-import ru.limeek.organizer.domain.entities.EventWithLocation
-import ru.limeek.organizer.domain.entities.event.Event
 import ru.limeek.organizer.data.daos.EventDao
 import ru.limeek.organizer.data.daos.LocationDao
+import ru.limeek.organizer.domain.entities.EventWithLocation
+import ru.limeek.organizer.domain.entities.event.Event
 import javax.inject.Inject
 
 class EventRepository @Inject constructor(private var eventDao: EventDao,

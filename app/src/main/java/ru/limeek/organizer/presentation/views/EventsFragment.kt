@@ -5,28 +5,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_calendar_events.*
 import kotlinx.android.synthetic.main.fragment_calendar_events.view.*
 import ru.limeek.organizer.R
-import ru.limeek.organizer.presentation.adapter.EventsListAdapter
-import ru.limeek.organizer.presentation.app.App
 import ru.limeek.organizer.domain.entities.event.Event
-import ru.limeek.organizer.presentation.di.components.ViewComponent
-import ru.limeek.organizer.presentation.di.modules.ViewModelModule
+import ru.limeek.organizer.presentation.adapter.EventsListAdapter
 import ru.limeek.organizer.presentation.util.Constants
 import ru.limeek.organizer.presentation.viewmodels.EventsViewModel
 import javax.inject.Inject
 
-class EventsFragment : Fragment(){
-    val logTag = "EventsFragment"
-
+class EventsFragment : DaggerFragment(){
     @Inject
     lateinit var viewModel: EventsViewModel
-
-    private var component : ViewComponent? = null
 
     private val adapter: EventsListAdapter by lazy {
         EventsListAdapter().apply {
@@ -39,15 +33,14 @@ class EventsFragment : Fragment(){
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        AndroidSupportInjection.inject(this)
         return inflater.inflate(R.layout.fragment_calendar_events, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getViewComponent().inject(this)
         viewModel.refresh()
         observeLiveData()
-        floatingButton.setOnClickListener { startDetailsActivity() }
         initRecycler()
     }
 
@@ -59,6 +52,7 @@ class EventsFragment : Fragment(){
     private fun observeLiveData(){
 
         viewModel.events.observe(viewLifecycleOwner, Observer{
+            tvEventsCount.text = getString(R.string.events_count, it.size)
             adapter.dataset = it
             adapter.notifyDataSetChanged()
         })
@@ -78,14 +72,6 @@ class EventsFragment : Fragment(){
         startActivity(intent)
     }
 
-    private fun getViewComponent() : ViewComponent {
-        if(component == null){
-            component = App.instance.component.newViewComponent(ViewModelModule(this))
-        }
-        return component!!
-    }
-
-
     override fun onResume() {
         super.onResume()
         refresh()
@@ -93,10 +79,5 @@ class EventsFragment : Fragment(){
 
     fun refresh(){
         viewModel.refresh()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        component = null
     }
 }

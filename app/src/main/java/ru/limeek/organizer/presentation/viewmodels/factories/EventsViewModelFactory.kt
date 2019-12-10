@@ -2,7 +2,6 @@ package ru.limeek.organizer.presentation.viewmodels.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ru.limeek.organizer.data.repository.EventRepository
 import ru.limeek.organizer.data.repository.SharedPrefsRepository
 import ru.limeek.organizer.domain.usecases.GetEventsByCachedDateUseCase
 import ru.limeek.organizer.presentation.viewmodels.EventsViewModel

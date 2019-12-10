@@ -2,9 +2,7 @@ package ru.limeek.organizer.presentation.viewmodels.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ru.limeek.organizer.data.repository.LocationRepository
 import ru.limeek.organizer.domain.usecases.DeleteLocationUseCase
-import ru.limeek.organizer.domain.usecases.DeleteLocationUseCase_Factory
 import ru.limeek.organizer.domain.usecases.InsertLocationUseCase
 import ru.limeek.organizer.domain.usecases.UpdateLocationUseCase
 import ru.limeek.organizer.presentation.viewmodels.LocationDetailsViewModel

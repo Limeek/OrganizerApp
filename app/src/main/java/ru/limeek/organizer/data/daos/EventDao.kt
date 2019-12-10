@@ -2,8 +2,8 @@ package ru.limeek.organizer.data.daos
 
 import androidx.room.*
 import org.joda.time.DateTime
-import ru.limeek.organizer.domain.entities.EventWithLocation
 import ru.limeek.organizer.data.database.DateConverter
+import ru.limeek.organizer.domain.entities.EventWithLocation
 import ru.limeek.organizer.domain.entities.event.Event
 
 @Dao
