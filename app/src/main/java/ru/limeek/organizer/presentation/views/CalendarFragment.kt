@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.calendar_fragment.*
-import ru.limeek.organizer.R
+import ru.limeek.organizer.databinding.CalendarFragmentBinding
 import ru.limeek.organizer.presentation.viewmodels.CalendarViewModel
 import javax.inject.Inject
 
@@ -16,8 +15,11 @@ class CalendarFragment: DaggerFragment() {
     @Inject
     lateinit var viewModel: CalendarViewModel
 
+    private lateinit var binding: CalendarFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.calendar_fragment, container, false)
+        binding = CalendarFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,17 +30,17 @@ class CalendarFragment: DaggerFragment() {
     }
 
     private fun initView(){
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             viewModel.onDateChange(year, month, dayOfMonth)
         }
     }
 
     private fun observeLiveData(){
         viewModel.refreshEventFragment.observe(viewLifecycleOwner, Observer{
-            (activity as? MainActivity)?.refreshEventsFragment()
+            (parentFragment as? MainFragment)?.refreshEventsFragment()
         })
         viewModel.currDate.observe(viewLifecycleOwner, Observer {
-            calendarView.date = it
+            binding.calendarView.date = it
         })
     }
 }

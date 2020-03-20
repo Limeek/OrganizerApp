@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="ru.limeek.organizer.presentation.views.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_mainFragment_to_locationFragment"
+            app:destination="@id/locationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="ru.limeek.organizer.presentation.views.EventDetailsFragment"
+        android:label="EventDetailsFragment" >
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_locationDetailsFragment"
+            app:destination="@id/locationDetailsFragment"
+            app:popUpTo="@+id/eventDetailsFragment" />
+        <argument
+            android:name="event"
+            app:argType="ru.limeek.organizer.domain.entities.event.Event"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument android:name="location"
+            app:argType="ru.limeek.organizer.domain.entities.location.Location"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationDetailsFragment"
+        android:name="ru.limeek.organizer.presentation.views.LocationDetailsFragment"
+        android:label="LocationDetailsFragment">
+        <action
+            android:id="@+id/action_locationDetailsFragment_to_locationFragment"
+            app:destination="@id/locationFragment"
+            app:popUpTo="@+id/locationFragment" />
+        <argument
+            android:name="fromEventDetails"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="location"
+            app:argType="ru.limeek.organizer.domain.entities.location.Location"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_locationDetailsFragment_to_eventDetailsFragment"
+            app:destination="@+id/eventDetailsFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/eventDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="ru.limeek.organizer.presentation.views.LocationFragment"
+        android:label="LocationFragment" >
+        <action
+            android:id="@+id/action_locationFragment_to_locationDetailsFragment"
+            app:destination="@id/locationDetailsFragment" />
+        <action
+            android:id="@+id/action_locationFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+</navigation>

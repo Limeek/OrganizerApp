@@ -12,7 +12,7 @@ class CalendarViewModel(private var repository: SharedPrefsRepository) : ViewMod
     val refreshEventFragment = SingleLiveEvent<Unit>()
     val currDate = MutableLiveData<Long>().apply { value = null }
 
-    fun onDateChange(year: Int, month: Int, day: Int){
+    val onDateChange = fun(year: Int, month: Int, day: Int){
         val cachedDate = DateTime.parse("$year-${month + 1}-$day", DateTimeFormat.forPattern(Constants.FORMAT_YY_MM_dd))
         repository.putDateTime(Constants.CACHED_DATE, cachedDate)
         refreshEventFragment.call()

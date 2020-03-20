@@ -31,14 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ru.limeek.organizer.presentation.views.EventDetailsActivity"
-                  android:label="@string/event_details"/>
-        <activity android:name="ru.limeek.organizer.presentation.views.LocationActivity"
-                  android:label="@string/title_locations"/>
-        <activity android:name="ru.limeek.organizer.presentation.views.LocationDetailsActivity"
-                  android:label="@string/title_locations"/>
-        <receiver android:name="ru.limeek.organizer.presentation.receiver.BroadcastReceiverNotification"
-                  android:enabled="true"
-            />
+<!--        <receiver android:name="ru.limeek.organizer.presentation.receiver.BroadcastReceiverNotification"-->
+<!--                  android:enabled="true"-->
+<!--            />-->
     </application>
 </manifest>

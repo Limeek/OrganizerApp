@@ -1,4 +1,4 @@
-package ru.limeek.organizer.presentation.di.modules.activity
+package ru.limeek.organizer.presentation.di.modules.fragments
 
 import androidx.lifecycle.ViewModelProviders
 import dagger.Module
@@ -8,24 +8,24 @@ import ru.limeek.organizer.domain.usecases.DeleteEventUseCase
 import ru.limeek.organizer.domain.usecases.GetUserCreatedLocationsUseCase
 import ru.limeek.organizer.domain.usecases.InsertEventUseCase
 import ru.limeek.organizer.domain.usecases.UpdateEventUseCase
-import ru.limeek.organizer.presentation.di.scopes.ActivityScope
+import ru.limeek.organizer.presentation.di.scopes.FragmentScope
 import ru.limeek.organizer.presentation.viewmodels.EventDetailsViewModel
 import ru.limeek.organizer.presentation.viewmodels.factories.EventDetailsViewModelFactory
-import ru.limeek.organizer.presentation.views.EventDetailsActivity
+import ru.limeek.organizer.presentation.views.EventDetailsFragment
 
 @Module
-class EventDetailsActivityModule {
+class EventDetailsFragmentModule {
 
     @Provides
-    @ActivityScope
-    fun provideEventDetailsViewModel(activity: EventDetailsActivity,
+    @FragmentScope
+    fun provideEventDetailsViewModel(fragment: EventDetailsFragment,
                                      sharedPrefsRepo: SharedPrefsRepository,
                                      insertEventUseCase: InsertEventUseCase,
                                      updateEventUseCase: UpdateEventUseCase,
                                      deleteEventUseCase: DeleteEventUseCase,
                                      getUserCreatedLocationsUseCase: GetUserCreatedLocationsUseCase
     ): EventDetailsViewModel {
-        return ViewModelProviders.of(activity, EventDetailsViewModelFactory(sharedPrefsRepo,
+        return ViewModelProviders.of(fragment, EventDetailsViewModelFactory(sharedPrefsRepo,
                 insertEventUseCase,
                 updateEventUseCase,
                 deleteEventUseCase,
